@@ -1,0 +1,39 @@
+{
+  "name": "sciviz-3d-generation-v1",
+  "requireCompletedTurn": true,
+  "requiredTools": [
+    "assess_visualization_feasibility",
+    "extract_visual_semantics",
+    "build_3d_prompt",
+    "generate_3d_content",
+    "assemble_interactive_page",
+    "validate_sciviz_output"
+  ],
+  "orderedTools": [
+    "assess_visualization_feasibility",
+    "extract_visual_semantics",
+    "build_3d_prompt",
+    "generate_3d_content",
+    "assemble_interactive_page",
+    "validate_sciviz_output"
+  ],
+  "successfulTools": [
+    "assess_visualization_feasibility",
+    "validate_sciviz_output"
+  ],
+  "retryRules": [],
+  "artifacts": [
+    {
+      "tool": "generate_3d_content",
+      "resultPath": "output_path",
+      "format": "glb",
+      "minBytes": 20
+    },
+    {
+      "tool": "assemble_interactive_page",
+      "resultPath": "output_path",
+      "format": "html",
+      "minBytes": 32
+    }
+  ]
+}

@@ -6,9 +6,19 @@
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-12
+
 ### Added
 
-- 建立仓库交接治理、内容分类、PR 模板与自动校验骨架。
+- 新增零第三方依赖的 AGH 插件基础设施：会话隔离、工作区定位和错误分类。
+- 新增配置驱动的 AGH 原生 trace 核验器，检查工具来源、顺序、结果配对、失败重试和产物证据。
+- 新增 GLB、HTML、JSON、GIF 格式签名、新鲜度及 SHA-256 检查。
+- 新增 Windows 与 WSL Node.js 24 离线测试，共 9 项测试。
+- 记录 Fracta-Proof 团队原创来源、迁移范围和暂不迁移内容。
+
+### Changed
+
+- 仓库策略允许根级 package.json 作为构建入口。
 
 ## [0.1.0] - 2026-10-12
 
@@ -18,5 +28,6 @@
 - 明确“版本只新增不覆盖”和“技术更新日志必填”规则。
 - 建立十一类内容目录。
 
-[Unreleased]: https://github.com/OvO-creator-001/SciViz-AGH/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/OvO-creator-001/SciViz-AGH/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/OvO-creator-001/SciViz-AGH/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/OvO-creator-001/SciViz-AGH/releases/tag/v0.1.0
