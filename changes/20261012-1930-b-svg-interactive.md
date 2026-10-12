@@ -8,6 +8,7 @@
 新增 src/render/{index,contract,text,svg}.mjs 与 src/ui/page.mjs：纯同步渲染、集中契约适配、3–8 节点纵向 SVG、最多 16 边的固定侧通道、HTML 节点高亮/键盘操作/来源与限制、不足报告及错误页。静态 SVG 附全文解释和来源；无新增依赖，无网络/模型调用。
 
 新增 examples/b-side/ 夹具与独立生成器、tests/b-renderer.test.mjs、B_RENDERER_HANDOFF、B_DEMO_GUIDE。UPDATES/README/CHANGELOG 添加入口与未发布摘要，不修改历史发布。A 核心、AGH、CLI、ops 和根级依赖未改。
+本次新运行目录用局部 .gitattributes 固定 LF，避免 Windows 检出破坏 JSON 字节哈希；旧证据目录不改。
 
 ## 接口与迁移
 

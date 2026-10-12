@@ -102,6 +102,7 @@ A 的 `loadRenderer()` 已自动发现本文件；无须改核心、CLI 或 AGH 
 - content_kind、内容限制和来源 URL 在 A 规范化时丢失；需要 A 决定是否保留。真实论文来源类型不从标题自动推断。现有 A 夹具标题/引文明确写非真实论文，B 独立夹具有醒目标记。
 - A 不足路径是否调用报告页导出，由 A 决定；当前 B 不修改 pipeline。
 - 根级 UPDATES、README、CHANGELOG 仅增加 B 功能入口和未发布记录，以满足仓库治理；无依赖/脚本配置更改。
+- 本次新证据目录内的 .gitattributes 固定 LF，避免 Windows 检出改变 manifest 对应的字节与哈希，不改变旧证据或根级 Git 配置。
 - 真实论文核对、真实 AGH 调用、另一位成员复现、视频正式规格与录制尚需团队完成。正式版本与不可变快照留给发布流程。
 
 验证事实见 `docs/product/B_DEMO_GUIDE.md` 的记录指引及本次 changes 条目；测试与浏览器实测分开记录。
