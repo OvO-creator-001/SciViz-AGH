@@ -1,6 +1,6 @@
 # B 侧固定 SVG 与离线互动页
 
-- 作者：miku（Codex 辅助）；日期：2026-10-12；分支 feat/b-svg-interactive，基于 A 的 82f8a14。关联 PR：本分支 draft PR，目标 feat/a-core-pipeline（创建后补链接）。
+- 作者：miku（Codex 辅助）；日期：2026-10-12；分支 feat/b-svg-interactive，基于 A 的 82f8a14。关联 [草稿 PR #4](https://github.com/OvO-creator-001/SciViz-AGH/pull/4)，目标 feat/a-core-pipeline；未合并。
 - 类别：主要为源码 05；测试 06、示例 07、证据 08 与交接/演示说明为同一可复现交付的必要配套。
 
 ## 实现

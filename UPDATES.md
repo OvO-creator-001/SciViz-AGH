@@ -6,7 +6,7 @@
 
 | 日期 | 更新 | 状态 | 快速入口 |
 |---|---|---|---|
-| 2026-10-12 | B 侧固定 SVG、离线互动页与临时契约适配 | B 分支待审查；17 项测试通过；用户确认正常页面交互；正式录制待完成 | [B 交接](docs/architecture/B_RENDERER_HANDOFF.md) · [演示指南](docs/product/B_DEMO_GUIDE.md) · [技术日志](changes/20261012-1930-b-svg-interactive.md) |
+| 2026-10-12 | B 侧固定 SVG、离线互动页与临时契约适配 | PR #4 草稿待审查，未合并；17 项测试通过；用户确认正常页面交互；正式录制待完成 | [PR #4](https://github.com/OvO-creator-001/SciViz-AGH/pull/4) · [B 交接](docs/architecture/B_RENDERER_HANDOFF.md) · [演示指南](docs/product/B_DEMO_GUIDE.md) · [技术日志](changes/20261012-1930-b-svg-interactive.md) |
 | 2026-10-12 | 根目录统一更新索引与README入口 | 随PR #3上传；详细记录持续归changes/ | [本次技术日志](changes/20261012-1721-root-update-index.md) |
 | 2026-10-12 | A侧免费评估核心、CLI、AGH业务工具代码及B侧渲染契约 | PR #3待另一方审查；自动检查通过；真实AGH安装调用和B侧联调未完成 | [PR #3](https://github.com/OvO-creator-001/SciViz-AGH/pull/3) · [交接说明](docs/architecture/A_CORE_HANDOFF_V1.md) · [技术细节](changes/20261012-1711-a-core-pipeline.md) |
 | 2026-10-12 | AGH基础设施、会话隔离、工作区发现与trace核验 | PR #1待另一方审查；自动检查通过 | [PR #1](https://github.com/OvO-creator-001/SciViz-AGH/pull/1) · [架构说明](docs/architecture/AGH_FOUNDATION.md) · [技术细节](changes/20261012-1600-reuse-agh-foundation.md) |
