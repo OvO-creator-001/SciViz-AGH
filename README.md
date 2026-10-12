@@ -1,12 +1,12 @@
 # SciViz-AGH
 
-论文可视化评估与科普内容生成插件。免费离线生成按关系分层的科学图解、SVG 和互动页面；先生成，再提示来源核对与版权事项。
+论文可视化评估与科普内容生成插件。免费离线生成流程、分层、网络及带来源的数据图、SVG 和互动页面；先生成，再提示来源核对与版权事项。
 
 本仓库用于项目协作与人员交接。所有贡献者必须遵守两条底线：
 
 **协作者快速入口：[最新更新、PR状态与下一步](UPDATES.md)。**
 
-**新版试用：[v0.2.1 快速上手](docs/product/QUICKSTART_021.md) · [页面预览截图](evidence/agh-atlas-021/desktop.png) · [真实 AGH 证据](evidence/agh-atlas-021/verification.json)。**
+**新版试用：[v0.3.0 六类图解画廊与接口](docs/product/QUICKSTART_030.md) · [流程截图](evidence/visual-grammar-030/method.png) · [数据图截图](evidence/agh-grammar-030/desktop.png) · [真实 AGH 证据](evidence/agh-grammar-030/verification.json)。**
 
 1. **历史版本只新增、不覆盖**：每次正式交接创建新的 `releases/vX.Y.Z/` 快照；已提交的版本目录禁止修改、重命名或删除。
 2. **技术变更可追溯**：每个 PR 必须同时新增 `changes/` 下的技术更新条目，写清实现、接口/数据变化、验证方法、风险与回滚方式。
@@ -42,20 +42,22 @@
 
 ## 当前阶段
 
-当前开发包 `sciviz-agh@0.2.1` 已在真实 AGH 宿主验证省略 `verified` 也可直接生成，状态为 `rendered`。图形使用深色科学画布、按关系分层的分支与合流、带文字的连线和上下游高亮；新增可选的线性波叠加示意与相位滑块。生成后在结果和页面末尾提示版权与核对事项。
+当前开发包 `sciviz-agh@0.3.0` 已在真实 AGH 验证 `rendered`。自动按连接结构选择流程/分层/网络，支持有来源的柱状/折线/散点图、角色符号、逐步讲解、精确数值表和来源跳转。六类示例浏览器检查、26 项测试及真实 AGH HTML 交互验证通过。省略 `verified` 仍直接生成，结果和页面末尾保留版权与核对提示。
 
 输入仍需整理为带来源的结构化材料；当前验收使用团队合成教学内容。任意论文的专业定制插图、自动 PDF 解析、3D、科学真实性认证尚未实现。真实案例复核、正式录屏和发布仍待完成。
 
 ## B 侧页面快速运行
 
 ```powershell
+node examples/generate-gallery-v3.mjs
+node src/cli.mjs generate examples/gallery-v3/model-comparison.json
 node src/cli.mjs generate examples/wave-explainer-v2.json
 node examples/b-side/generate-demo.mjs
 node src/cli.mjs generate examples/core-content-v1.json
 ```
 
 在返回的新目录中双击 interactive.html。静态 diagram.svg 可独立阅读；旧产物不会覆盖。
-当前生成行为、可选示意模板与试玩方法见 [v0.2.1 指南](docs/product/QUICKSTART_021.md)。旧版 B 交接和演示指南保留在 docs/ 中用于追溯；`verified` 与固定布局的旧描述已由本版取代。
+当前生成行为、接口与试玩方法见 [v0.3.0 指南](docs/product/QUICKSTART_030.md)。旧版指南保留用于追溯；固定布局、verified 阻塞与“仅波形专用图解”的旧描述均已由新版本取代。
 
 ## 开发验证
 

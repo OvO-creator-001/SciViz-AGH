@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "origin": "actual AGH generated HTML",
+  "directory": "evidence/sciviz-jtYJBx",
+  "checks": [
+    "6 exact chart values",
+    "series toggle",
+    "keyboard data readout",
+    "table and source expansion",
+    "step guide",
+    "relation highlight",
+    "copyright footer",
+    "mobile no document overflow",
+    "SVG XML parse"
+  ],
+  "errors": [],
+  "external_requests": []
+}

@@ -11,3 +11,8 @@ evidence/agh-rendered-013/*.jsonl -text
 evidence/agh-atlas-021/*.json -text
 evidence/agh-atlas-021/*.jsonl -text
 evidence/sciviz-DlxoRp/* -text
+# Preserve v0.3.0 evidence and artifact hashes.
+evidence/visual-grammar-030/*.json -text
+evidence/agh-grammar-030/*.json -text
+evidence/agh-grammar-030/*.jsonl -text
+evidence/sciviz-jtYJBx/* -text

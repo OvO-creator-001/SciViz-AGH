@@ -1,3 +1,4 @@
+import { normalizeVisualSpec, visualRoles } from '../core/visual-spec.mjs'
 // Presentation validation only. Evidence decisions remain the caller's responsibility.
 export class RenderInputError extends Error {
   constructor(path, message) {
@@ -72,8 +73,9 @@ export function adaptRenderInput(first, second) {
   const nodes = array(content.nodes, 'content.nodes', 3, 8).map((n, i) => {
     const path = `content.nodes[${i}]`
     object(n, path)
+    if (n.visual_role !== undefined && !visualRoles.includes(n.visual_role)) fail(`${path}.visual_role`, 'unknown visual role')
     return { id: identifier(n.id, `${path}.id`, nodeIds), label: text(n.label, `${path}.label`, 120),
-      explanation: text(n.explanation, `${path}.explanation`), source_refs: refs(n.source_refs, `${path}.source_refs`) }
+      explanation: text(n.explanation, `${path}.explanation`), source_refs: refs(n.source_refs, `${path}.source_refs`), visual_role: n.visual_role ?? 'concept' }
   })
   const pairs = new Set()
   const edges = array(content.edges, 'content.edges', 0, 16).map((e, i) => {
@@ -88,6 +90,8 @@ export function adaptRenderInput(first, second) {
   if (assessment.evidence_refs !== undefined) refs(assessment.evidence_refs, 'assessment.evidence_refs')
   if (content.content_kind !== undefined && !['synthetic_example', 'paper_excerpt'].includes(content.content_kind)) fail('content.content_kind', '未知内容类型')
   let illustration = null
+  const visualization = normalizeVisualSpec(content.visualization, sourceIds, (path, message) => fail('content.' + path, message))
+  if (assessment.decision === 'supported' && visualization.chart?.series.some(s => !s.source_refs.length)) fail('content.visualization.chart', 'chart series require source references')
   if (content.illustration !== undefined) {
     const figure = object(content.illustration, 'content.illustration')
     if (figure.kind !== 'wave_interference') fail('content.illustration.kind', '不支持的示意模板')
@@ -100,7 +104,7 @@ export function adaptRenderInput(first, second) {
   return {
     title: text(content.title, 'content.title', 200),
     goal: legacy ? null : text(content.goal, 'content.goal'),
-    kind: content.content_kind ?? 'unspecified', nodes, edges, sources, illustration,
+    kind: content.content_kind ?? 'unspecified', nodes, edges, sources, illustration, visualization,
     limitations: [...texts(content.limitations ?? [], 'content.limitations'), ...texts(assessment.limitations, 'assessment.limitations')],
     decision: assessment.decision, missing,
   }

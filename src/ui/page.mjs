@@ -2,6 +2,8 @@ import { escapeText as esc, safeHttpUrl } from '../render/text.mjs'
 import { presentationNotice, scopeNotice } from '../render/svg.mjs'
 import { copyrightNotice, reviewNotice } from '../core/notices.mjs'
 import { renderWave, wavePoints } from '../render/wave.mjs'
+import { chartPanel } from './chart-panel.mjs'
+import { selectPresentation } from '../render/scene.mjs'
 
 const styles = `
 :root{color-scheme:dark;font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;color:#e6edf7;background:#080d16;--mint:#66d9cf;--muted:#a2afc2;--line:#253246}
@@ -11,6 +13,7 @@ const styles = `
 @media(max-width:1050px){header,main,footer{padding-left:24px;padding-right:24px}.studio{grid-template-columns:minmax(0,1fr) 285px}.canvas{height:630px}}
 @media(max-width:760px){header,main,footer{padding-left:16px;padding-right:16px}.studio,.sections{display:block}.inspector{position:static;max-height:none}.canvas{height:560px}.stage-top{align-items:start;flex-direction:column}.card{padding:20px}.stage{padding:0}.brand{letter-spacing:.5px}.brand span{font-size:10px}.footline{flex-direction:column}.flow-node.dimmed{opacity:.4}}
 @media(prefers-reduced-motion:no-preference){.flow-node,.flow-edge{transition:opacity .18s ease}.node-surface{transition:stroke-width .15s ease}}
+.guide-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 22px;background:#66d9cf06;border-bottom:1px solid var(--line)}.guide-controls output{flex:1;min-width:160px;font-size:12px;color:#b7c8dd}.layout-note{margin:0;padding:12px 22px;color:#8fabc7;font-size:12px}.chart-legend{display:flex;gap:18px;flex-wrap:wrap;margin:16px 0}.chart-legend button{border-color:var(--series);color:var(--series);background:transparent}.chart-legend button:before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--series);margin-right:8px}.chart-legend button[aria-pressed=false]{opacity:.4}.plot-scroll,.table-scroll{overflow:auto;scrollbar-color:#344661 #0a101a}.plot-scroll svg{min-width:780px}.chart-mark:hover,.chart-mark:focus{filter:brightness(1.4);outline:none}.chart-mark:focus circle,.chart-mark:focus rect{stroke:#fff;stroke-width:2}.data-table summary{cursor:pointer;color:#a2b9d3;font-size:13px}.data-table table{border-collapse:collapse;width:100%;font-size:12px;margin-top:14px}.data-table td,.data-table th{text-align:left;padding:10px;border-bottom:1px solid #29394e;overflow-wrap:anywhere;max-width:220px}.data-table th{color:#bcd0e7}.data-table td{color:#97abc4}
 @media print{.studio,.sections{display:block}.canvas{height:auto;overflow:visible}.canvas svg{width:100%!important}.inspector{position:static;max-height:none}.node-detail[hidden],.relation[hidden]{display:block!important}.flow-node.dimmed,.flow-edge.dimmed{opacity:1}.tools,.node-nav,button{display:none}.card{break-inside:avoid}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 `
 
@@ -77,7 +80,36 @@ function interact(wavePoints) {
     status.textContent = '关系 E' + (Number(edge.dataset.edge) + 1) + ' · 仅突出显示两端与方向'
     edge.querySelector('.edge-label').scrollIntoView({ block: 'nearest', inline: 'nearest' })
   }))
-  document.getElementById('show-all').addEventListener('click', reset)
+  const route = nodes.map(n => Number(n.dataset.node))
+  let step = -1
+  const stepOutput = document.getElementById('guide-status')
+  function guide(delta) {
+    step = Math.max(0, Math.min(route.length - 1, step + delta))
+    select(route[step], true)
+    stepOutput.textContent = (step + 1) + ' / ' + route.length + ' · ' + details[route[step]].querySelector('h3').textContent
+    document.getElementById('guide-prev').disabled = step === 0
+    document.getElementById('guide-next').disabled = step === route.length - 1
+  }
+  document.getElementById('guide-prev').addEventListener('click', () => guide(-1))
+  document.getElementById('guide-next').addEventListener('click', () => guide(1))
+  document.getElementById('show-all').addEventListener('click', () => {
+    reset(); step = -1; stepOutput.textContent = '逐步聚焦概念与直接联系；顺序仅用于阅读，不代表因果。'
+    document.getElementById('guide-prev').disabled = true
+    document.getElementById('guide-next').disabled = false
+  })
+  document.querySelectorAll('.chart-mark').forEach(mark => {
+    const read = () => { document.getElementById('chart-reading').textContent = mark.dataset.reading }
+    mark.addEventListener('pointerenter', read); mark.addEventListener('focus', read)
+  })
+  const seriesButtons = [...document.querySelectorAll('[data-toggle-series]')]
+  seriesButtons.forEach(button => button.addEventListener('click', () => {
+    const active = button.getAttribute('aria-pressed') === 'true'
+    if (active && seriesButtons.filter(b => b.getAttribute('aria-pressed') === 'true').length === 1) return
+    button.setAttribute('aria-pressed', String(!active))
+    const group = document.querySelector('.chart-series[data-series="' + button.dataset.toggleSeries + '"]')
+    group.style.display = active ? 'none' : ''
+    document.getElementById('chart-reading').textContent = '仅切换系列可见性；坐标轴范围不变，完整数值仍在下方数据表。'
+  }))
   const phase = document.getElementById('phase')
   if (phase) {
     const update = () => {
@@ -91,7 +123,7 @@ function interact(wavePoints) {
   const canvas = document.querySelector('.canvas'), svg = canvas.querySelector('svg')
   let zoom = 1
   function resize() {
-    svg.style.width = Math.round(Math.max(340, canvas.clientWidth) * zoom) + 'px'
+    svg.style.width = Math.round(Math.max(svg.dataset.layout === 'process' && nodes.length > 4 ? 1400 : 800, canvas.clientWidth) * zoom) + 'px'
     document.getElementById('zoom-value').textContent = Math.round(zoom * 100) + '%'
   }
   document.getElementById('zoom-in').addEventListener('click', () => { zoom = Math.min(3, zoom + .25); resize() })
@@ -109,6 +141,7 @@ function documentPage(title, body, interactive = false) {
 }
 
 export function renderPage(data, diagram) {
+  const presentation = selectPresentation(data)
   const sourceIndex = new Map(data.sources.map((s, i) => [s.id, i]))
   const nodeIndex = new Map(data.nodes.map((n, i) => [n.id, i]))
   const refs = ids => ids.length ? ids.map(id => `<a href="#source-${sourceIndex.get(id)}">[${esc(id)}]</a>`).join(' ') : '未提供来源引用'
@@ -120,9 +153,9 @@ export function renderPage(data, diagram) {
   const header = `<header><div class="brand"><strong>SCIVIZ<span style="color:#718399"> / </span>AGH</strong><span>让知识的关系变得可见</span></div><p class="eyebrow">SCIENTIFIC EXPLAINER / 交互式科学图解</p><h1>${esc(data.title)}</h1>${data.goal ? `<p class="lead">${esc(data.goal)}</p>` : ''}<div class="meta"><span class="ready">${insufficient ? '结构信息待补充' : '图解已生成'}</span><span>${data.nodes.length} 个概念</span><span>${data.edges.length} 条关系</span><span>${esc(presentationNotice(data))}</span></div></header>`
   const content = insufficient
     ? `<section class="card"><h2>缺失要求</h2><p class="status">现有输入缺少可呈现的来源引用或关系；这与是否填写 verified 无关。</p>${data.missing.length ? list(data.missing) : '<p>请核对输入中的来源引用与关系。</p>'}</section>`
-    : `<div class="studio"><section class="card stage"><div class="stage-top"><h2>01 / 关系全景</h2><div class="tools" data-js-controls hidden><button id="zoom-out" aria-label="缩小图形">−</button><span id="zoom-value" class="muted">100%</span><button id="zoom-in" aria-label="放大图形">+</button><button id="zoom-fit">适应宽度</button><button id="show-all">显示全部解释</button></div></div><div class="canvas" tabindex="0" role="region" aria-label="科学关系图，可滚动查看并缩放">${diagram}</div><div class="legend"><span>输入关系</span><span class="return">回连关系</span><span>点击节点追踪上下游</span></div></section><aside class="card inspector"><div class="mini-label">FOLLOW THE CONNECTION</div><h2>02 / 概念与关系</h2><p id="selection-status" class="muted" role="status" aria-live="polite">全部节点解释与来源</p><div class="node-nav" data-js-controls hidden>${data.nodes.map((n, i) => `<button data-select-node="${i}" aria-pressed="false" aria-label="选择节点 ${esc(n.label)}">${String(i + 1).padStart(2, '0')}</button>`).join('')}</div>${data.nodes.map((n, i) => `<article class="node-detail" id="detail-${i}"><h3>${String(i + 1).padStart(2, '0')}. ${esc(n.label)}</h3><p>${esc(n.explanation)}</p><p class="muted">来源 ${refs(n.source_refs)}</p></article>`).join('')}<h3>关系解读</h3><p class="hint">选择关系可突出显示箭头的起点与终点。</p>${data.edges.map((e, i) => `<article class="relation" data-relation="${i}"><button type="button" aria-pressed="false"><small>E${i + 1}</small><span class="route">${esc(data.nodes[nodeIndex.get(e.from)].label)} → ${esc(data.nodes[nodeIndex.get(e.to)].label)}</span><span class="relation-label">${esc(e.label)}</span></button><p class="muted">依据 ${refs(e.source_refs)}</p></article>`).join('')}<noscript><p>JavaScript 未启用：图形、解释、关系与来源仍可阅读。</p></noscript></aside></div>`
+    : `<div class="studio"><section class="card stage"><div class="stage-top"><h2>01 / ${presentation.name}</h2><div class="tools" data-js-controls hidden><button id="zoom-out" aria-label="缩小图形">−</button><span id="zoom-value" class="muted">100%</span><button id="zoom-in" aria-label="放大图形">+</button><button id="zoom-fit">适应宽度</button><button id="show-all">显示全部解释</button></div></div><p class="layout-note">${esc(presentation.reason)}</p><div class="guide-controls" data-js-controls hidden><button id="guide-prev" disabled>← 上一步</button><output id="guide-status" aria-live="polite">逐步聚焦概念与直接联系；顺序仅用于阅读，不代表因果。</output><button id="guide-next">逐步讲解 →</button></div><div class="canvas" tabindex="0" role="region" aria-label="科学关系图，可滚动查看并缩放">${diagram}</div><div class="legend"><span>输入关系</span><span class="return">回连关系</span><span>点击节点追踪上下游</span></div></section><aside class="card inspector"><div class="mini-label">FOLLOW THE CONNECTION</div><h2>02 / 概念与关系</h2><p id="selection-status" class="muted" role="status" aria-live="polite">全部节点解释与来源</p><div class="node-nav" data-js-controls hidden>${data.nodes.map((n, i) => `<button data-select-node="${i}" aria-pressed="false" aria-label="选择节点 ${esc(n.label)}">${String(i + 1).padStart(2, '0')}</button>`).join('')}</div>${data.nodes.map((n, i) => `<article class="node-detail" id="detail-${i}"><h3>${String(i + 1).padStart(2, '0')}. ${esc(n.label)}</h3><p>${esc(n.explanation)}</p><p class="muted">来源 ${refs(n.source_refs)}</p></article>`).join('')}<h3>关系解读</h3><p class="hint">选择关系可突出显示箭头的起点与终点。</p>${data.edges.map((e, i) => `<article class="relation" data-relation="${i}"><button type="button" aria-pressed="false"><small>E${i + 1}</small><span class="route">${esc(data.nodes[nodeIndex.get(e.from)].label)} → ${esc(data.nodes[nodeIndex.get(e.to)].label)}</span><span class="relation-label">${esc(e.label)}</span></button><p class="muted">依据 ${refs(e.source_refs)}</p></article>`).join('')}<noscript><p>JavaScript 未启用：图形、解释、关系与来源仍可阅读。</p></noscript></aside></div>`
   const figure = data.illustration && !insufficient ? `<section class="card science-plate"><div class="plate-heading"><h2>把抽象关系画出来 / 波的线性叠加</h2><span class="muted">理想化教学示意 · 非实验数据</span></div><div class="wave-scroll" tabindex="0" role="region" aria-label="波形对比，窄屏可左右滑动">${renderWave(data.illustration)}</div><p class="mobile-hint hint">左右滑动比较三幅波形，纵轴使用相同比例。</p><div class="phase-control" data-js-controls hidden><label for="phase">相位差 φ = <output id="phase-number">${data.illustration.phase_degrees}°</output></label><input id="phase" type="range" min="0" max="360" step="1" value="${data.illustration.phase_degrees}"><span id="phase-note" class="phase-note" role="status"></span></div><p class="muted">两列同频、同振幅的线性波，仅改变相对相位。曲线由图示公式计算，不从论文臆造测量点。依据 ${refs(data.illustration.source_refs)}</p></section>` : ''
-  return documentPage(data.title, `${header}<main>${figure}${content}<div class="sections">${sources}<section class="card limitations"><div class="mini-label">READ WITH CONTEXT</div><h2>如何阅读这张图</h2><p class="notice">${esc(scopeNotice)}</p><p class="muted">图中层级由连接关系决定；编号对应原始概念。虚线只用于标记布局中的回连，不额外推断科学意义。Tab、回车和方向键也可以操作图形。</p>${list(data.limitations)}</section></div></main>`, !insufficient)
+  return documentPage(data.title, `${header}<main>${!insufficient && data.visualization?.chart ? chartPanel(data.visualization.chart, refs) : ""}${figure}${content}<div class="sections">${sources}<section class="card limitations"><div class="mini-label">READ WITH CONTEXT</div><h2>如何阅读这张图</h2><p class="notice">${esc(scopeNotice)}</p><p class="muted">布局根据连接结构选择；图形符号是抽象角色，不是真实分子、设备或几何。节点编号对应原始概念，E 编号对应完整关系；虚线只标记布局回连，不额外推断科学意义。Tab、回车和方向键也可以操作图形。</p>${list(data.limitations)}</section></div></main>`, !insufficient)
 }
 
 export function renderInputErrorPage(error) {

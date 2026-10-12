@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "checked": [
+    "method",
+    "hierarchy",
+    "network",
+    "bar",
+    "line",
+    "scatter"
+  ],
+  "checks": [
+    "guide steps",
+    "relationship highlighting",
+    "series toggles",
+    "exact data reading",
+    "source expansion",
+    "copyright",
+    "mobile no document overflow",
+    "SVG parse",
+    "no external requests"
+  ],
+  "errors": [],
+  "network": []
+}

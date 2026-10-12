@@ -1,4 +1,5 @@
 import { copyrightNotice, reviewNotice } from './notices.mjs'
+import { normalizeVisualSpec, visualRoles } from './visual-spec.mjs'
 
 export class InputError extends Error {
   constructor(message) { super(message); this.code = 'INVALID_INPUT' }
@@ -32,7 +33,8 @@ export function normalizeInput(value) {
   const nodes = value.nodes.map(n => {
     requireThat(n && id(n.id) && !nodeIds.has(n.id) && text(n.label, 120) && text(n.explanation), 'invalid or duplicate node')
     nodeIds.add(n.id)
-    return { id: n.id, label: n.label, explanation: n.explanation, source_refs: refs(n) }
+    requireThat(n.visual_role === undefined || visualRoles.includes(n.visual_role), 'invalid node visual_role')
+    return { id: n.id, label: n.label, explanation: n.explanation, source_refs: refs(n), ...(n.visual_role === undefined ? {} : { visual_role: n.visual_role }) }
   })
   requireThat(Array.isArray(value.edges) && value.edges.length <= 16, 'edges must be an array (max 16)')
   const pairs = new Set()
@@ -43,6 +45,7 @@ export function normalizeInput(value) {
     return { from: e.from, to: e.to, label: e.label, source_refs: refs(e) }
   })
   let illustration
+  const visualization = normalizeVisualSpec(value.visualization, sourceIds, (path, message) => { throw new InputError(`${path}: ${message}`) })
   if (value.illustration !== undefined) {
     const figure = value.illustration
     requireThat(figure && figure.kind === 'wave_interference', 'unsupported illustration kind')
@@ -60,6 +63,7 @@ export function normalizeInput(value) {
     ...(value.content_kind === undefined ? {} : { content_kind: value.content_kind }),
     ...(value.limitations === undefined ? {} : { limitations: [...value.limitations] }),
     ...(illustration === undefined ? {} : { illustration }),
+    visualization,
     sources, nodes, edges, constraints: { allow_paid: false, external_budget: 0, offline_required: true } }
 }
 
@@ -70,8 +74,9 @@ export function assessVisualization(value) {
   for (const e of input.edges) if (!e.source_refs.length) missing.push('edge:' + e.from + ':' + e.to + ':source_reference_required')
   if (!input.edges.length) missing.push('relationships_required')
   if (input.illustration && !input.illustration.source_refs.length) missing.push('illustration:source_reference_required')
+  for (const [i, s] of (input.visualization.chart?.series ?? []).entries()) if (!s.source_refs.length) missing.push(`chart:series:${i}:source_reference_required`)
   const supported = missing.length === 0
-  const evidenceRefs = [...new Set([...input.nodes, ...input.edges, ...(input.illustration ? [input.illustration] : [])].flatMap(x => x.source_refs))]
+  const evidenceRefs = [...new Set([...input.nodes, ...input.edges, ...(input.illustration ? [input.illustration] : []), ...(input.visualization.chart?.series ?? [])].flatMap(x => x.source_refs))]
   const pending = input.sources.filter(s => !s.verified && evidenceRefs.includes(s.id)).map(s => s.id)
   return {
     schema_version: '1.0', decision: supported ? 'supported' : 'insufficient_evidence',
