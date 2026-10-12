@@ -83,7 +83,7 @@ test('failure classifier separates model-fixable and environment errors', () => 
   assert.equal(classifyFailure({ stderr: 'HTTP 401 invalid api key' }).code, 'AUTH_REQUIRED')
 })
 
-test('AGH plugin registers only foundation tools with complete metadata and schema', async () => {
+test('AGH plugin registers foundation and business tools with metadata and schema', async () => {
   const packageJson = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
   const entry = packageJson.agnes.plugins[0]
   const module = await import(pathToFileURL(resolve(packageJson.exports)).href + '?test=' + Date.now())
@@ -96,7 +96,7 @@ test('AGH plugin registers only foundation tools with complete metadata and sche
     ctx: { log: { info: () => {} } },
   }
   plugin.apply({ extension: () => agnes })
-  assert.deepEqual([...tools.keys()], ['set_sciviz_root', 'inspect_sciviz_workspace'])
+  assert.deepEqual([...tools.keys()], ['assess_visualization_feasibility', 'generate_visualization', 'set_sciviz_root', 'inspect_sciviz_workspace'])
   assert.equal(typeof hooks.get('shutdown'), 'function')
 
   const metadataKeys = ['isReadOnly', 'isDestructive', 'isConcurrencySafe', 'isOpenWorld', 'replay', 'costHint', 'deferLoading', 'requiresApproval']
