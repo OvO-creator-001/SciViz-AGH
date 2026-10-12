@@ -40,7 +40,7 @@
 
 ## 当前阶段
 
-当前开发分支已具备规则评估核心、CLI、固定布局 SVG 和离线互动 HTML。输入需要人工整理与核对；示例为教学合成内容。真实 AGH 宿主验收、真实论文核对与正式发布仍待完成；不提供 3D 或自动论文解析。
+当前开发分支已具备规则评估核心、CLI、固定布局 SVG 和离线互动 HTML；集成包 `sciviz-agh@0.1.3` 已在真实 AGH 宿主完成三工具调用并返回 `rendered`。输入仍需人工整理与核对，现有验收输入是教学合成内容；真实论文核对、视觉验收、录屏与正式发布仍待完成。不提供 3D 或自动论文解析。
 
 ## B 侧页面快速运行
 
@@ -56,4 +56,4 @@ node src/cli.mjs generate examples/core-content-v1.json
 
 要求 Node.js 24 或更高版本。运行 npm test 执行离线测试；使用 ops/verify-agh-trace.mjs 和 ops/trace-policy.example.json 核验 AGH 原生 trace。
 
-AGH 基础设施说明见 docs/architecture/AGH_FOUNDATION.md，Fracta-Proof 复用边界见 docs/research/FRACTA_PROOF_REUSE.md。
+AGH 基础设施说明见 docs/architecture/AGH_FOUNDATION.md，真实渲染验收见 docs/architecture/AGH_RENDERED_013.md，Fracta-Proof 复用边界见 docs/research/FRACTA_PROOF_REUSE.md。

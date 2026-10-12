@@ -2,3 +2,8 @@
 evidence/sciviz-IbR8bd/*.json -text
 evidence/agh-registration-012/*.json -text
 evidence/agh-registration-012/*.jsonl -text
+# Preserve the new CLI and native AGH rendered evidence byte-for-byte.
+evidence/sciviz-8LyTpJ/* -text
+evidence/sciviz-JnpumL/* -text
+evidence/agh-rendered-013/*.json -text
+evidence/agh-rendered-013/*.jsonl -text

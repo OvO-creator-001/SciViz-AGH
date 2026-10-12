@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-10-12T11:57:45.588Z",
+  "execution_origin": "agh",
+  "status": "rendered",
+  "assessment_decision": "supported",
+  "renderer_error": null,
+  "artifacts": [
+    {
+      "name": "content.json",
+      "bytes": 1242,
+      "sha256": "91b8ef62c579d0371c024b34adef8601c15f6a4fd7f602d6ceeb55ab982789cc"
+    },
+    {
+      "name": "assessment.json",
+      "bytes": 480,
+      "sha256": "0481f3a6530f4d63e3565ef0a338dcf0da2e18990ef59f05eaa3301c4710d1a2"
+    },
+    {
+      "name": "diagram.svg",
+      "bytes": 5396,
+      "sha256": "d41d3c708fb339b220df3269e08c6b1dd46c723ae2d1ee35ea3161ea50b71eb5"
+    },
+    {
+      "name": "interactive.html",
+      "bytes": 9471,
+      "sha256": "bf528bc5dffa33a2aaddb1f66f9ef8a5f6476ae1c1ebaa339ef01ec238b400d7"
+    }
+  ]
+}

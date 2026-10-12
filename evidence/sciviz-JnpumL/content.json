@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "title": "教学夹具：样本处理流程（非真实论文）",
+  "goal": "演示来源到流程节点的映射",
+  "audience": "undergraduate",
+  "sources": [
+    {
+      "id": "s1",
+      "citation": "SciViz团队合成教学夹具，不代表研究结果",
+      "locator": "fixture paragraph 1",
+      "excerpt": "样本先登记，再测量，最后汇总。",
+      "verified": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "n1",
+      "label": "登记",
+      "explanation": "记录样本标识。",
+      "source_refs": [
+        "s1"
+      ]
+    },
+    {
+      "id": "n2",
+      "label": "测量",
+      "explanation": "记录测量值。",
+      "source_refs": [
+        "s1"
+      ]
+    },
+    {
+      "id": "n3",
+      "label": "汇总",
+      "explanation": "整理结果。",
+      "source_refs": [
+        "s1"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "n1",
+      "to": "n2",
+      "label": "随后",
+      "source_refs": [
+        "s1"
+      ]
+    },
+    {
+      "from": "n2",
+      "to": "n3",
+      "label": "随后",
+      "source_refs": [
+        "s1"
+      ]
+    }
+  ],
+  "constraints": {
+    "allow_paid": false,
+    "external_budget": 0,
+    "offline_required": true
+  }
+}
