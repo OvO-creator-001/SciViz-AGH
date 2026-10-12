@@ -6,8 +6,9 @@
 
 | 日期 | 更新 | 状态 | 快速入口 |
 |---|---|---|---|
+| 2026-10-12 | MIT授权，AGH安装/信任/启用及三次真实工具调用通过 | A02接入已通过；生成仍为renderer_pending | [验收记录](docs/architecture/AGH_REGISTRATION_012.md) · [技术日志](changes/20261012-1750-agh-native-registration.md) |
 | 2026-10-12 | 根目录统一更新索引与README入口 | 随PR #3上传；详细记录持续归changes/ | [本次技术日志](changes/20261012-1721-root-update-index.md) |
-| 2026-10-12 | A侧免费评估核心、CLI、AGH业务工具代码及B侧渲染契约 | PR #3待另一方审查；自动检查通过；真实AGH安装调用和B侧联调未完成 | [PR #3](https://github.com/OvO-creator-001/SciViz-AGH/pull/3) · [交接说明](docs/architecture/A_CORE_HANDOFF_V1.md) · [技术细节](changes/20261012-1711-a-core-pipeline.md) |
+| 2026-10-12 | A侧免费评估核心、CLI、AGH业务工具代码及B侧渲染契约 | PR #3待另一方审查；真实AGH接入后续已通过；B侧联调未完成 | [PR #3](https://github.com/OvO-creator-001/SciViz-AGH/pull/3) · [交接说明](docs/architecture/A_CORE_HANDOFF_V1.md) · [技术细节](changes/20261012-1711-a-core-pipeline.md) |
 | 2026-10-12 | AGH基础设施、会话隔离、工作区发现与trace核验 | PR #1待另一方审查；自动检查通过 | [PR #1](https://github.com/OvO-creator-001/SciViz-AGH/pull/1) · [架构说明](docs/architecture/AGH_FOUNDATION.md) · [技术细节](changes/20261012-1600-reuse-agh-foundation.md) |
 | 2026-10-12 | 免费优先方案与66小时双人任务安排 | PR #2待另一方审查；自动检查通过；该分支的根目录包含TASKS.md | [PR #2](https://github.com/OvO-creator-001/SciViz-AGH/pull/2) |
 

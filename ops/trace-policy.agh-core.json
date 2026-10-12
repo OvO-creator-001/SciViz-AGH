@@ -1,0 +1,9 @@
+{
+  "name": "sciviz-agh-core-registration-v1",
+  "requireCompletedTurn": true,
+  "requiredTools": ["set_sciviz_root", "assess_visualization_feasibility", "generate_visualization"],
+  "orderedTools": ["set_sciviz_root", "assess_visualization_feasibility", "generate_visualization"],
+  "successfulTools": ["set_sciviz_root", "assess_visualization_feasibility", "generate_visualization"],
+  "artifactRoots": [".."],
+  "artifacts": [{"tool":"generate_visualization", "resultPath":"output_path", "format":"json", "minBytes":32}]
+}

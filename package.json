@@ -1,9 +1,9 @@
 {
   "name": "sciviz-agh",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "type": "module",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "description": "SciViz-AGH plugin foundation and evidence verification tools",
   "engines": {
     "node": ">=24"

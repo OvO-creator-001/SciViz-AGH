@@ -9,6 +9,7 @@ Set-Location -LiteralPath $repoRoot
 $gitCommand = Get-Command git -ErrorAction Stop
 $allowedRootFiles = @(
     ".gitignore",
+    ".gitattributes",
     "CHANGELOG.md",
     "LICENSE",
     "package.json",

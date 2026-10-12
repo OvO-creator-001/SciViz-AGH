@@ -1,0 +1,4 @@
+# Preserve bytes of this native evidence set, including manifest SHA-256 inputs.
+evidence/sciviz-IbR8bd/*.json -text
+evidence/agh-registration-012/*.json -text
+evidence/agh-registration-012/*.jsonl -text
