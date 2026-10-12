@@ -1,0 +1,34 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# Node
+node_modules/
+dist/
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Runtime and generated temporary files
+*.log
+tmp/
+work/
+outputs/
+
+# Large generated 3D assets should be attached to a versioned GitHub Release
+*.glb
+*.gltf
+*.bin

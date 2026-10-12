@@ -1,0 +1,20 @@
+name: Repository policy
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  policy:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate classification, change log, and immutable releases
+        shell: pwsh
+        run: ./ops/Test-RepositoryPolicy.ps1 -BaseRef "${{ github.event.pull_request.base.sha }}"
