@@ -11,7 +11,8 @@ $allowedRootFiles = @(
     ".gitignore",
     "CHANGELOG.md",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "TASKS.md"
 )
 $allowedRootDirectories = @(
     ".github",
