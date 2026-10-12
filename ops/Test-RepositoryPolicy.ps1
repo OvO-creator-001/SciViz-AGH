@@ -11,6 +11,7 @@ $allowedRootFiles = @(
     ".gitignore",
     "CHANGELOG.md",
     "LICENSE",
+    "package.json",
     "README.md"
 )
 $allowedRootDirectories = @(
@@ -72,7 +73,9 @@ foreach ($changeFile in $changeFiles) {
 if ($BaseRef -and $BaseRef -notmatch '^0+$') {
     & $gitCommand.Source cat-file -e "$BaseRef^{commit}" 2>$null
     if ($LASTEXITCODE -eq 0) {
-        $changed = @(& $gitCommand.Source diff --name-status --find-renames $BaseRef HEAD)
+        # Compare the base commit with the current worktree so this behaves the same
+        # before a local commit and in a clean CI checkout after the commit.
+        $changed = @(& $gitCommand.Source diff --name-status --find-renames $BaseRef)
         $baseReleaseVersions = @(& $gitCommand.Source ls-tree --name-only "${BaseRef}:releases" 2>$null)
         $mutatedRelease = foreach ($line in $changed) {
             $fields = $line -split "`t"

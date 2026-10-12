@@ -38,4 +38,10 @@
 
 ## 当前阶段
 
-仓库目前为交接治理骨架。项目规划将在后续以“产品与需求”分类进入，不与治理文件混放。
+仓库目前已具备交接治理骨架、AGH 插件通用基础设施和原生 trace 证据核验器。论文可视化评分、3D 生成和互动页面业务工具仍待实现。
+
+## 开发验证
+
+要求 Node.js 24 或更高版本。运行 npm test 执行离线测试；使用 ops/verify-agh-trace.mjs 和 ops/trace-policy.example.json 核验 AGH 原生 trace。
+
+AGH 基础设施说明见 docs/architecture/AGH_FOUNDATION.md，Fracta-Proof 复用边界见 docs/research/FRACTA_PROOF_REUSE.md。
