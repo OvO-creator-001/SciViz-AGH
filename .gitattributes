@@ -16,3 +16,7 @@ evidence/visual-grammar-030/*.json -text
 evidence/agh-grammar-030/*.json -text
 evidence/agh-grammar-030/*.jsonl -text
 evidence/sciviz-jtYJBx/* -text
+# Preserve v0.3.1 native link evidence and generated artifact hashes.
+evidence/agh-page-link-031/*.json -text
+evidence/agh-page-link-031/*.jsonl -text
+evidence/sciviz-MxKo3r/* -text

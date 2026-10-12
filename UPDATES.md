@@ -6,6 +6,7 @@
 
 | 日期 | 更新 | 状态 | 快速入口 |
 |---|---|---|---|
+| 2026-10-12 | v0.3.1：生成后直接打开页面 | 27项测试通过；真实AGH rendered，模型最终回复逐字展示Markdown链接和备用路径；上传A分支/PR #3，未合并 | [使用说明](docs/product/QUICKSTART_030.md) · [真实验证](evidence/agh-page-link-031/RESULTS.md) · [技术日志](changes/20261012-2315-clickable-page-entry.md) |
 | 2026-10-12 | v0.3.0：流程/分层/网络 + 三类数据图 | 26项测试、六类页面浏览器检查与真实AGH rendered 通过；上传A分支/PR #3，未合并 | [画廊与接口](docs/product/QUICKSTART_030.md) · [真实验证](evidence/agh-grammar-030/RESULTS.md) · [技术日志](changes/20261012-2300-multi-view-science-grammar.md) |
 | 2026-10-12 | v0.2.1：直接生成、版权页脚与科学图解升级 | 缺省/false verified 不阻塞；真实AGH rendered、浏览器交互与20项测试通过；通过PR #3交付 | [三分钟试用](docs/product/QUICKSTART_021.md) · [效果截图](evidence/agh-atlas-021/desktop.png) · [验证记录](evidence/agh-atlas-021/RESULTS.md) · [技术日志](changes/20261012-2235-direct-generate-science-atlas.md) |
 | 2026-10-12 | A/B端到端联调与真实AGH渲染验收 | PR #4代码已审查并合入A开发分支；AGH 0.1.3实际返回rendered并生成SVG/HTML；随本次提交更新PR #3 | [验收记录](docs/architecture/AGH_RENDERED_013.md) · [原生证据](evidence/agh-rendered-013/verification.json) · [技术日志](changes/20261012-2005-ab-rendered-integration.md) |

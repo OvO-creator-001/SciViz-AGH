@@ -39,5 +39,10 @@ test('bundles never overwrite; missing evidence skips renderer; renderer failure
   assert.equal(failed.status,'renderer_failed')
   const rendered=await generateVisualization(fixture,{root,renderer:()=>({svg:'<svg></svg>',html:'<!doctype html><html></html>'})})
   assert.equal(rendered.status,'rendered'); assert.equal(rendered.artifacts.length,4)
+  assert.equal(rendered.interactive_html_path,join(rendered.directory,'interactive.html'))
+  assert.match(rendered.interactive_html_uri,/^file:\/\//)
+  assert.equal(rendered.open_page_markdown,`[打开互动页面](${rendered.interactive_html_uri})`)
+  assert.equal(JSON.parse(await readFile(rendered.output_path,'utf8')).entrypoint,'interactive.html')
+  assert.equal(a.interactive_html_path,undefined)
  } finally {await rm(root,{recursive:true,force:true})}
 })

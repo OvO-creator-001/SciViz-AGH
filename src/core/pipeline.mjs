@@ -2,6 +2,7 @@ import { mkdir, mkdtemp, realpath, writeFile } from 'node:fs/promises'
 import { join, relative, isAbsolute } from 'node:path'
 import { createHash } from 'node:crypto'
 import { normalizeInput, assessVisualization } from './assessment.mjs'
+import { pageAccess } from './page-link.mjs'
 
 export async function generateVisualization(value, { root, renderer = null, executionOrigin = 'cli' } = {}) {
   const input = normalizeInput(value)
@@ -33,7 +34,8 @@ export async function generateVisualization(value, { root, renderer = null, exec
     } catch (error) { status = 'renderer_failed'; rendererError = { code: 'RENDERER_FAILED', message: String(error.message).slice(0, 500) } }
   }
   const notices = { source_review: assessment.source_review, warnings: assessment.warnings, copyright_notice: assessment.copyright_notice }
-  const manifest = { schema_version: '1.0', created_at: new Date().toISOString(), execution_origin: executionOrigin, status, assessment_decision: assessment.decision, ...notices, renderer_error: rendererError, artifacts }
+  const page = pageAccess(directory, status)
+  const manifest = { schema_version: '1.0', created_at: new Date().toISOString(), execution_origin: executionOrigin, status, assessment_decision: assessment.decision, entrypoint: page ? 'interactive.html' : null, ...notices, renderer_error: rendererError, artifacts }
   await writeFile(join(directory, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n', { flag: 'wx' })
-  return { status, decision: assessment.decision, output_path: join(directory, 'manifest.json'), directory, artifacts, ...notices, renderer_error: rendererError }
+  return { status, decision: assessment.decision, output_path: join(directory, 'manifest.json'), directory, ...page, artifacts, ...notices, renderer_error: rendererError }
 }

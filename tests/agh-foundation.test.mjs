@@ -6,6 +6,7 @@ import { join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
 import { classifyFailure } from '../src/agh/errors.mjs'
+import { pageFileUri } from '../src/core/page-link.mjs'
 import { createSessionState } from '../src/agh/session-state.mjs'
 import { createWorkspaceLocator, normalizePath } from '../src/agh/workspace-discovery.mjs'
 
@@ -83,6 +84,11 @@ test('failure classifier separates model-fixable and environment errors', () => 
   assert.equal(classifyFailure({ stderr: 'HTTP 401 invalid api key' }).code, 'AUTH_REQUIRED')
 })
 
+test('generated page links map WSL mounts to clickable Windows file URIs', () => {
+  assert.equal(pageFileUri('/mnt/c/Users/Team Demo/evidence/run/interactive.html'), 'file:///C:/Users/Team%20Demo/evidence/run/interactive.html')
+  assert.match(pageFileUri(resolve('evidence/run/interactive.html')), /^file:\/\//)
+})
+
 test('AGH plugin registers foundation and business tools with metadata and schema', async () => {
   const packageJson = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
   const entry = packageJson.agnes.plugins[0]
@@ -118,4 +124,11 @@ test('AGH plugin registers foundation and business tools with metadata and schem
   await hooks.get('shutdown')({}, ctxA)
   const afterShutdown = await tools.get('inspect_sciviz_workspace').execute({}, { ...ctxA, cwd: tmpdir() })
   assert.equal(afterShutdown.details.code, 'SCIVIZ_ROOT_NOT_FOUND')
+
+  const fixture = JSON.parse(readFileSync(new URL('../examples/core-content-v1.json', import.meta.url), 'utf8'))
+  const generated = await tools.get('generate_visualization').execute({ content_json: JSON.stringify(fixture) }, ctxB)
+  assert.equal(generated.structured.status, 'rendered')
+  assert.equal(generated.content.length, 1)
+  assert.equal(JSON.parse(generated.content[0].text).interactive_html_uri, generated.structured.interactive_html_uri)
+  assert.match(generated.structured.open_page_markdown, /打开互动页面/)
 })

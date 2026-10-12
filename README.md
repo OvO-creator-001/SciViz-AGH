@@ -6,7 +6,7 @@
 
 **协作者快速入口：[最新更新、PR状态与下一步](UPDATES.md)。**
 
-**新版试用：[v0.3.0 六类图解画廊与接口](docs/product/QUICKSTART_030.md) · [流程截图](evidence/visual-grammar-030/method.png) · [数据图截图](evidence/agh-grammar-030/desktop.png) · [真实 AGH 证据](evidence/agh-grammar-030/verification.json)。**
+**新版试用：[v0.3.0/0.3.1 六类图解与页面入口](docs/product/QUICKSTART_030.md) · [流程截图](evidence/visual-grammar-030/method.png) · [真实页面入口证据](evidence/agh-page-link-031/RESULTS.md)。**
 
 1. **历史版本只新增、不覆盖**：每次正式交接创建新的 `releases/vX.Y.Z/` 快照；已提交的版本目录禁止修改、重命名或删除。
 2. **技术变更可追溯**：每个 PR 必须同时新增 `changes/` 下的技术更新条目，写清实现、接口/数据变化、验证方法、风险与回滚方式。
@@ -42,7 +42,7 @@
 
 ## 当前阶段
 
-当前开发包 `sciviz-agh@0.3.0` 已在真实 AGH 验证 `rendered`。自动按连接结构选择流程/分层/网络，支持有来源的柱状/折线/散点图、角色符号、逐步讲解、精确数值表和来源跳转。六类示例浏览器检查、26 项测试及真实 AGH HTML 交互验证通过。省略 `verified` 仍直接生成，结果和页面末尾保留版权与核对提示。
+当前开发包 `sciviz-agh@0.3.1` 在 v0.3.0 多视图渲染基础上，为成功生成结果增加可点击页面 Markdown、文件 URI 和绝对路径备用入口。自动按连接结构选择流程/分层/网络，支持有来源的柱状/折线/散点图、角色符号、逐步讲解、精确数值表和来源跳转。省略 `verified` 仍直接生成，结果和页面末尾保留版权与核对提示。
 
 输入仍需整理为带来源的结构化材料；当前验收使用团队合成教学内容。任意论文的专业定制插图、自动 PDF 解析、3D、科学真实性认证尚未实现。真实案例复核、正式录屏和发布仍待完成。
 

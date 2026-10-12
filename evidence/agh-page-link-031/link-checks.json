@@ -1,0 +1,59 @@
+{
+  "verified": true,
+  "status": "rendered",
+  "directory": "evidence/sciviz-MxKo3r",
+  "tool_result_success": true,
+  "tool_result_text_only_for_agh_compatibility": true,
+  "exact_markdown_in_final_model_output": true,
+  "fallback_path_in_final_model_output": true,
+  "wsl_uri_mapped_to_windows": true,
+  "manifest_entrypoint": "interactive.html",
+  "all_artifact_hashes_verified": true,
+  "open_page_markdown": "[打开互动页面](file:///C:/Users/lenovo/Documents/Codex/2026-10-12/sciviz-agh-3d-sciviz-agh-3d/evidence/sciviz-MxKo3r/interactive.html)",
+  "interactive_html_path": "/mnt/c/Users/lenovo/Documents/Codex/2026-10-12/sciviz-agh-3d-sciviz-agh-3d/evidence/sciviz-MxKo3r/interactive.html",
+  "events": [
+    {
+      "seq": 767,
+      "type": "turn/start",
+      "origin": "system"
+    },
+    {
+      "seq": 777,
+      "type": "tool/call",
+      "name": "set_sciviz_root",
+      "origin": "model"
+    },
+    {
+      "seq": 778,
+      "type": "tool/call",
+      "name": "assess_visualization_feasibility",
+      "origin": "model"
+    },
+    {
+      "seq": 782,
+      "type": "tool/result",
+      "origin": "tool:set_sciviz_root"
+    },
+    {
+      "seq": 786,
+      "type": "tool/result",
+      "origin": "tool:assess_visualization_feasibility"
+    },
+    {
+      "seq": 799,
+      "type": "tool/call",
+      "name": "generate_visualization",
+      "origin": "model"
+    },
+    {
+      "seq": 803,
+      "type": "tool/result",
+      "origin": "tool:generate_visualization"
+    },
+    {
+      "seq": 822,
+      "type": "turn/end",
+      "origin": "system"
+    }
+  ]
+}
