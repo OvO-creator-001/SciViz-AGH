@@ -8,10 +8,30 @@ import { assessVisualization } from '../src/core/assessment.mjs'
 import { generateVisualization } from '../src/core/pipeline.mjs'
 import { loadRenderer } from '../src/core/renderer-adapter.mjs'
 import { generateDemo } from '../examples/b-side/generate-demo.mjs'
+import { layoutGraph } from '../src/render/layout.mjs'
+import { wavePoints } from '../src/render/wave.mjs'
 const json = async path => JSON.parse(await readFile(new URL(path, import.meta.url), 'utf8'))
 const content = await json('../examples/b-side/content.json')
 const assessment = await json('../examples/b-side/assessment.json')
 const coreContent = await json('../examples/core-content-v1.json')
+const waveContent = await json('../examples/wave-explainer-v2.json')
+
+test('wave illustration: explicit sourced model, equal scales and phase cancellation', () => {
+  const combined = phase => wavePoints(phase, 'sum').split(' ').map(point => Number(point.split(',')[1]))
+  assert.ok(combined(180).every(y => y === 154))
+  assert.equal(Math.min(...combined(0)), 84)
+  assert.equal(Math.max(...combined(0)), 224)
+  const output = renderVisualization({content:waveContent,assessment:assessVisualization(waveContent)})
+  assert.match(output.html,/id="phase"/)
+  assert.match(output.html,/非实验数据/)
+  assert.match(output.svg,/data-wave="sum"/)
+  for (const phase of [-1, 361, '60']) {
+    const invalid=structuredClone(waveContent); invalid.illustration.phase_degrees=phase
+    assert.throws(()=>assessVisualization(invalid),/phase_degrees/)
+  }
+  const missing=structuredClone(waveContent); missing.illustration.source_refs=[]
+  assert.equal(assessVisualization(missing).decision,'insufficient_evidence')
+})
 
 test('B: pure deterministic output and both contracts integrate with the real A pipeline', async () => {
   const input = structuredClone(content), before = JSON.stringify(input)
@@ -41,7 +61,48 @@ test('B: insufficient evidence shows gaps and existing sources without any SVG',
   assert.match(output.html, /团队编写的教学样例/)
   const unverified = structuredClone(coreContent)
   unverified.sources[0].verified = false
-  assert.equal(renderVisualization({ content: unverified, assessment: assessVisualization(unverified) }).svg, null)
+  const pending = renderVisualization({ content: unverified, assessment: assessVisualization(unverified) })
+  assert.match(pending.svg, /<svg/)
+  assert.match(pending.html, /待核对 · 不影响本次生成/)
+  assert.match(pending.html, /<footer><section class="copyright"/)
+  assert.match(pending.html, /版权风险/)
+})
+
+test('atlas: shuffled branches, feedback and long relations retain all edges with disjoint label boxes', () => {
+  const nodes = ['d', 'b', 'a', 'c'].map(id => ({ id, label: id, explanation: id, source_refs: ['s1'] }))
+  const edge = (from, to, label = '关系') => ({ from, to, label, source_refs: ['s1'] })
+  const edges = [edge('a','b'), edge('a','c'), edge('b','d'), edge('c','d'), edge('d','a','反馈'.repeat(60))]
+  const graph = layoutGraph({nodes, edges})
+  const byId = new Map(graph.boxes.map(b => [b.node.id, b]))
+  assert.ok(byId.get('a').y < byId.get('b').y)
+  assert.equal(byId.get('b').y, byId.get('c').y)
+  assert.ok(byId.get('d').y > byId.get('c').y)
+  assert.equal(graph.edges.length, edges.length)
+  assert.ok(graph.edges.find(e => e.edge.from === 'd').feedback)
+  const overlaps = (a,b) => a.x < b.x+b.width && a.x+a.width > b.x && a.y < b.y+b.height && a.y+a.height > b.y
+  const all = [...graph.boxes,...graph.edges]
+  all.forEach((a,i) => all.slice(i+1).forEach(b => assert.equal(overlaps(a,b), false)))
+  for (const box of all) assert.ok(box.x >= 0 && box.y >= 0 && box.x+box.width <= graph.width && box.y+box.height <= graph.height)
+})
+
+test('unreviewed sources generate with notices, content type and source URLs intact', async () => {
+  const input=structuredClone(coreContent)
+  delete input.sources[0].verified
+  input.content_kind='synthetic_example'
+  input.sources[0].url='https://example.com/teaching'
+  const root=await mkdtemp(join(tmpdir(),'sciviz-unreviewed-'))
+  try {
+    const result=await generateVisualization(input,{root,renderer:await loadRenderer()})
+    assert.equal(result.status,'rendered')
+    assert.equal(result.warnings[0].code,'SOURCE_REVIEW_PENDING')
+    const manifest=JSON.parse(await readFile(result.output_path,'utf8'))
+    assert.equal(manifest.copyright_notice,result.copyright_notice)
+    const html=await readFile(join(result.directory,'interactive.html'),'utf8')
+    assert.match(html,/教学合成示例/)
+    assert.match(html,/href="https:\/\/example.com\/teaching"/)
+    assert.match(html,/版权风险/)
+    assert.match(html,/data-from="0" data-to="1"/)
+  } finally {await rm(root,{recursive:true,force:true})}
 })
 
 test('B: invalid structure and references fail explicitly with a field path', () => {

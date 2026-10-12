@@ -55,12 +55,12 @@ export function adaptRenderInput(first, second) {
   const sources = array(content.sources, 'content.sources', 0, 20).map((s, i) => {
     const path = `content.sources[${i}]`
     object(s, path)
-    if (!legacy && typeof s.verified !== 'boolean') fail(`${path}.verified`, '需要人工确认布尔标记')
+    if (!legacy && s.verified !== undefined && typeof s.verified !== 'boolean') fail(`${path}.verified`, '可选的人工核对标记必须是布尔值')
     return {
       id: identifier(s.id, `${path}.id`, sourceIds),
       citation: text(legacy ? s.label : s.citation, `${path}.${legacy ? 'label' : 'citation'}`),
       locator: text(s.locator, `${path}.locator`), excerpt: text(s.excerpt, `${path}.excerpt`, 10000),
-      verified: legacy ? null : s.verified,
+      verified: legacy ? null : (s.verified ?? false),
       url: s.url === undefined ? null : text(s.url, `${path}.url`),
     }
   })
@@ -87,10 +87,20 @@ export function adaptRenderInput(first, second) {
   })
   if (assessment.evidence_refs !== undefined) refs(assessment.evidence_refs, 'assessment.evidence_refs')
   if (content.content_kind !== undefined && !['synthetic_example', 'paper_excerpt'].includes(content.content_kind)) fail('content.content_kind', '未知内容类型')
+  let illustration = null
+  if (content.illustration !== undefined) {
+    const figure = object(content.illustration, 'content.illustration')
+    if (figure.kind !== 'wave_interference') fail('content.illustration.kind', '不支持的示意模板')
+    const phase = figure.phase_degrees ?? 0
+    if (!Number.isFinite(phase) || phase < 0 || phase > 360) fail('content.illustration.phase_degrees', '相位差需要为 0–360 度')
+    const source_refs = refs(figure.source_refs, 'content.illustration.source_refs')
+    if (!source_refs.length) fail('content.illustration.source_refs', '示意模板需要来源引用')
+    illustration = { kind: figure.kind, phase_degrees: phase, source_refs }
+  }
   return {
     title: text(content.title, 'content.title', 200),
     goal: legacy ? null : text(content.goal, 'content.goal'),
-    kind: content.content_kind ?? 'unspecified', nodes, edges, sources,
+    kind: content.content_kind ?? 'unspecified', nodes, edges, sources, illustration,
     limitations: [...texts(content.limitations ?? [], 'content.limitations'), ...texts(assessment.limitations, 'assessment.limitations')],
     decision: assessment.decision, missing,
   }

@@ -1,44 +1,44 @@
 import { escapeText as esc, wrapText } from './text.mjs'
+import { layoutGraph } from './layout.mjs'
+import { copyrightNotice } from '../core/notices.mjs'
+import { renderWave } from './wave.mjs'
 
-export const presentationNotice = (data) => data.kind === 'synthetic_example'
+export const presentationNotice = data => data.kind === 'synthetic_example'
   ? '教学合成示例 · 非真实论文结论'
-  : '依据输入制作的流程示意 · 科学含义需人工核对'
-export const scopeNotice = '评估仅表示输入满足既定规则，不表示科学正确性已验证。'
+  : '科学内容示意 · 请结合原始来源阅读'
+export const scopeNotice = '箭头表达输入中的关系，不自动表示因果；结构可呈现不等于科学结论已验证。'
+const palette = ['#66d9cf', '#82b4ff', '#c2a2f5', '#efc778', '#f39ca9', '#8cd6b5', '#a4bef3', '#d5b9ed']
+const color = index => palette[index % palette.length]
 
 export function renderSvg(data, interactive = false) {
-  const titleLines = wrapText(data.title, 58)
-  const headerBottom = 110 + titleLines.length * 26
-  let y = headerBottom + 36
-  const boxes = data.nodes.map((node, index) => {
-    const lines = wrapText(node.label, 32)
-    const height = Math.max(88, 46 + lines.length * 24)
-    const box = { node, index, lines, y, height }
-    y += height + 70
-    return box
-  })
-  const byId = new Map(boxes.map(b => [b.node.id, b]))
-  const paths = data.edges.map((edge, i) => {
-    const from = byId.get(edge.from), to = byId.get(edge.to)
-    const adjacent = to.index === from.index + 1
-    const lane = 500 + i * 14
-    const start = from.y + from.height / 2, end = to.y + to.height / 2
-    const d = adjacent ? `M 260 ${from.y + from.height} V ${to.y - 8}` : `M 450 ${start} H ${lane} V ${end} H 458`
-    const tx = adjacent ? 280 : lane + 3, ty = adjacent ? from.y + from.height + 40 : start - 8
-    return `<g><title>${esc(`E${i + 1}: ${edge.from} → ${edge.to}：${edge.label}；来源 ${edge.source_refs.join(', ') || '未提供'}`)}</title><path d="${d}" fill="none" stroke="#70869b" stroke-width="2" marker-end="url(#arrow)"/><text x="${tx}" y="${ty}" font-size="13" fill="#40566b">E${i + 1}</text></g>`
+  const graph = layoutGraph(data)
+  const labels = new Map(data.nodes.map(n => [n.id, n.label]))
+  const titleLines = wrapText(data.title, Math.floor((graph.width - 96) / 12))
+  const titleOffset = Math.max(0, titleLines.length - 1) * 30
+  const figureHeight = data.illustration && !interactive ? graph.width / 1020 * 296 + 30 : 0
+  const headerOffset = titleOffset + figureHeight
+  const edgeMarkup = graph.edges.map(edge => {
+    const ink = edge.feedback ? '#efc778' : color(edge.from)
+    const attrs = `data-edge="${edge.index}" data-from="${edge.from}" data-to="${edge.to}"`
+    return `<g class="flow-edge" ${attrs} style="--edge-color:${ink}"><title>${esc(`${labels.get(edge.edge.from)} → ${labels.get(edge.edge.to)}：${edge.edge.label}`)}</title><g fill="none" stroke="${ink}" stroke-width="2.3"${edge.feedback ? ' stroke-dasharray="7 5"' : ''}><path d="${edge.departure}"/><path d="${edge.arrival}" marker-end="url(#arrow-${edge.index})"/></g><rect class="edge-label" x="${edge.x}" y="${edge.y}" width="${edge.width}" height="${edge.height}" rx="8" fill="#0c131e" stroke="${ink}" stroke-opacity=".3"/><text x="${edge.lx}" y="${edge.y + 18}" text-anchor="middle" font-size="10" letter-spacing="1.4" fill="${ink}">E${edge.index + 1}${edge.feedback ? ' · 回连' : ''}</text>${edge.lines.map((line, i) => `<text x="${edge.lx}" y="${edge.y + 39 + i * 20}" text-anchor="middle" font-size="14" fill="#dbe6f3" xml:space="preserve">${esc(line)}</text>`).join('')}</g>`
   }).join('')
-  const shapes = boxes.map(({ node, index, lines, y: top, height }) => `<g class="flow-node"${interactive ? ` role="button" tabindex="0" aria-pressed="false" data-node="${index}" aria-controls="detail-${index}"` : ''} aria-label="${esc(`${index + 1}. ${node.label}`)}"><title>${esc(node.explanation)}</title><rect x="70" y="${top}" width="380" height="${height}" rx="14" fill="#ffffff" stroke="#526e88" stroke-width="2"/><text x="90" y="${top + 25}" font-size="12" fill="#516e87">${String(index + 1).padStart(2, '0')}</text><text x="260" y="${top + 52}" text-anchor="middle" font-size="18" fill="#132d45">${lines.map((line, i) => `<tspan x="260" dy="${i === 0 ? 0 : 24}">${esc(line)}</tspan>`).join('')}</text></g>`).join('')
+  const shapes = graph.boxes.map(({ node, index, lines, x, y, width, height, incoming, outgoing }) => {
+    const ink = color(index)
+    return `<g class="flow-node" style="--node-color:${ink}"${interactive ? ` role="button" tabindex="0" aria-pressed="false" data-node="${index}" aria-controls="detail-${index}"` : ''} aria-label="${esc(`${index + 1}. ${node.label}`)}"><title>${esc(node.explanation)}</title><rect class="node-halo" x="${x - 5}" y="${y - 5}" width="${width + 10}" height="${height + 10}" rx="17" fill="none" stroke="${ink}" stroke-opacity=".1"/><rect class="node-surface" x="${x}" y="${y}" width="${width}" height="${height}" rx="12" fill="url(#node-surface)" stroke="${ink}" stroke-opacity=".55"/><circle cx="${x + 28}" cy="${y + 29}" r="13" fill="${ink}" fill-opacity=".1" stroke="${ink}" stroke-opacity=".6"/><text x="${x + 28}" y="${y + 33}" text-anchor="middle" font-size="10" fill="${ink}">${String(index + 1).padStart(2, '0')}</text><text x="${x + width - 22}" y="${y + 34}" text-anchor="end" font-size="10" letter-spacing="1" fill="#a0b0c4">${incoming.length} 入向 / ${outgoing.length} 出向</text>${lines.map((line, i) => `<text x="${x + width / 2}" y="${y + 70 + i * 25}" text-anchor="middle" font-size="19" font-weight="550" fill="#f0f5fb" xml:space="preserve">${esc(line)}</text>`).join('')}<line x1="${x + width / 2 - 24}" x2="${x + width / 2 + 24}" y1="${y + height - 16}" y2="${y + height - 16}" stroke="${ink}" stroke-opacity=".6"/></g>`
+  }).join('')
   const notes = []
   if (!interactive) {
-    notes.push('节点解释与来源')
-    data.nodes.forEach((n, i) => notes.push(`${i + 1}. ${n.label}`, n.explanation, `来源：${n.source_refs.join(', ') || '未提供'}`))
-    notes.push('连接关系（E 编号对应箭头；不自动表示因果）')
-    data.edges.forEach((e, i) => notes.push(`E${i + 1}. ${e.from} → ${e.to}：${e.label}；来源：${e.source_refs.join(', ') || '未提供'}`))
+    notes.push('阅读注解 / 节点与来源')
+    data.nodes.forEach((n, i) => notes.push(`${String(i + 1).padStart(2, '0')}  ${n.label}`, n.explanation, `来源：${n.source_refs.join(', ') || '未提供'}`, ''))
+    notes.push('完整关系 / 与图中 E 编号对应')
+    data.edges.forEach((e, i) => notes.push(`E${i + 1}  ${labels.get(e.from)} → ${labels.get(e.to)}`, e.label, `来源：${e.source_refs.join(', ') || '未提供'}`, ''))
     notes.push('来源说明')
-    data.sources.forEach(s => notes.push(`[${s.id}] ${s.citation}`, `位置：${s.locator}`, `摘录：${s.excerpt}`, s.url ? `链接文本：${s.url}` : '', `人工确认：${s.verified === null ? '未提供标记' : s.verified ? '提交者标记为已核对' : '未确认'}`))
-    notes.push('限制', scopeNotice, ...data.limitations)
+    data.sources.forEach(s => notes.push(`[${s.id}] ${s.citation}`, `位置：${s.locator}`, s.excerpt, s.url ? `链接：${s.url}` : '', `来源核对：${s.verified ? '提交者标记已核对' : '待核对（不影响生成）'}`, ''))
+    notes.push(scopeNotice, ...data.limitations, '', copyrightNotice)
   }
-  const noteLines = notes.flatMap(value => wrapText(value, 84))
-  const noteStart = y + 20
-  const height = noteStart + noteLines.length * 22 + 40
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="760" height="${height}" viewBox="0 0 760 ${height}" role="${interactive ? 'group' : 'img'}" aria-labelledby="diagram-title diagram-desc" font-family="system-ui, sans-serif"><title id="diagram-title">${esc(data.title)}</title><desc id="diagram-desc">${esc(`${presentationNotice(data)}。${scopeNotice}节点按输入顺序纵向排列，E 编号对应连接关系。`)}</desc><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#70869b"/></marker></defs><rect width="760" height="${height}" fill="#f3f7fa"/><text x="32" y="32" font-size="14" fill="#315b77">${esc(presentationNotice(data))}</text>${titleLines.map((line, i) => `<text x="32" y="${66 + i * 26}" font-size="20" fill="#142e44">${esc(line)}</text>`).join('')}<text x="32" y="${headerBottom - 20}" font-size="13" fill="#40566b">节点顺序来自输入；箭头只表示输入中的关系。</text><text x="32" y="${headerBottom}" font-size="12" fill="#40566b">${esc(scopeNotice)}</text>${paths}${shapes}${noteLines.map((line, i) => `<text x="32" y="${noteStart + i * 22}" font-size="14" fill="#20394e" xml:space="preserve">${esc(line)}</text>`).join('')}</svg>`
+  const noteLines = notes.flatMap(value => wrapText(value, Math.floor((graph.width - 110) / 8)))
+  const noteStart = graph.height + headerOffset + 40
+  const height = interactive ? graph.height + headerOffset : noteStart + noteLines.length * 24 + 36
+  const inset = figureHeight ? `<svg x="0" y="${130 + titleOffset}" width="${graph.width}" height="${figureHeight - 30}" viewBox="0 0 1020 296">${renderWave(data.illustration)}</svg>` : ''
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${graph.width}" height="${height}" viewBox="0 0 ${graph.width} ${height}" role="${interactive ? 'group' : 'img'}" aria-labelledby="diagram-title diagram-desc" font-family="Segoe UI, Microsoft YaHei, system-ui, sans-serif"><title id="diagram-title">${esc(data.title)}</title><desc id="diagram-desc">${esc(`${presentationNotice(data)}。${scopeNotice}按关系分层；分支并排，回连以虚线单独布线，全部关系保留原文。`)}</desc><defs><linearGradient id="node-surface" x2="0" y2="1"><stop stop-color="#192435"/><stop offset="1" stop-color="#101925"/></linearGradient><pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".65" fill="#304057" opacity=".55"/></pattern>${graph.edges.map(edge => `<marker id="arrow-${edge.index}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 1 1 L 8 5 L 1 9" fill="none" stroke="${edge.feedback ? '#efc778' : color(edge.from)}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>`).join('')}</defs><rect width="100%" height="100%" fill="#0a101a"/><rect width="100%" height="${graph.height + headerOffset}" fill="url(#grid)"/><text x="42" y="40" fill="#66d9cf" font-size="11" letter-spacing="3">SCIVIZ / RELATION ATLAS</text>${titleLines.map((line, i) => `<text x="42" y="${80 + i * 30}" font-size="23" fill="#eff4fc">${esc(line)}</text>`).join('')}<text x="42" y="${112 + titleOffset}" font-size="12" fill="#9cacc0">按关系分层 · 箭头旁直接阅读关系 · 虚线标记回连</text>${inset}<g transform="translate(0 ${headerOffset})">${graph.bands.map(b => `<text x="28" y="${b.y}" font-size="10" letter-spacing="2" fill="#8291a7">层 ${String(b.rank + 1).padStart(2, '0')}</text>`).join('')}${edgeMarkup}${shapes}</g>${!interactive ? `<line x1="42" y1="${noteStart - 22}" x2="${graph.width - 42}" y2="${noteStart - 22}" stroke="#2a3a4e"/>${noteLines.map((line, i) => `<text x="42" y="${noteStart + i * 24}" font-size="14" fill="#b7c6d9" xml:space="preserve">${esc(line)}</text>`).join('')}` : ''}</svg>`
 }

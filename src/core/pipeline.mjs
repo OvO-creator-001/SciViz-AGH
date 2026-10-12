@@ -32,7 +32,8 @@ export async function generateVisualization(value, { root, renderer = null, exec
       status = 'rendered'
     } catch (error) { status = 'renderer_failed'; rendererError = { code: 'RENDERER_FAILED', message: String(error.message).slice(0, 500) } }
   }
-  const manifest = { schema_version: '1.0', created_at: new Date().toISOString(), execution_origin: executionOrigin, status, assessment_decision: assessment.decision, renderer_error: rendererError, artifacts }
+  const notices = { source_review: assessment.source_review, warnings: assessment.warnings, copyright_notice: assessment.copyright_notice }
+  const manifest = { schema_version: '1.0', created_at: new Date().toISOString(), execution_origin: executionOrigin, status, assessment_decision: assessment.decision, ...notices, renderer_error: rendererError, artifacts }
   await writeFile(join(directory, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n', { flag: 'wx' })
-  return { status, decision: assessment.decision, output_path: join(directory, 'manifest.json'), directory, artifacts, renderer_error: rendererError }
+  return { status, decision: assessment.decision, output_path: join(directory, 'manifest.json'), directory, artifacts, ...notices, renderer_error: rendererError }
 }

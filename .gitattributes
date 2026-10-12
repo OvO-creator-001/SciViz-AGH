@@ -7,3 +7,7 @@ evidence/sciviz-8LyTpJ/* -text
 evidence/sciviz-JnpumL/* -text
 evidence/agh-rendered-013/*.json -text
 evidence/agh-rendered-013/*.jsonl -text
+# Preserve v0.2.1 native evidence and generated artifact hashes.
+evidence/agh-atlas-021/*.json -text
+evidence/agh-atlas-021/*.jsonl -text
+evidence/sciviz-DlxoRp/* -text

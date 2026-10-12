@@ -1,0 +1,14 @@
+{
+  "verified": true,
+  "directory": "evidence/sciviz-DlxoRp",
+  "status": "rendered",
+  "source_review": {
+    "status": "pending",
+    "pending_source_refs": [
+      "s1"
+    ],
+    "blocks_generation": false
+  },
+  "hashes_verified": true,
+  "omitted_verified_preserved_in_native_call": true
+}

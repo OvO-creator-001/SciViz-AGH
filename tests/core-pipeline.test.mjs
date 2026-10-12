@@ -3,13 +3,23 @@ import assert from 'node:assert/strict'
 import { mkdtemp, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { assessVisualization } from '../src/core/assessment.mjs'
+import { assessVisualization, normalizeInput } from '../src/core/assessment.mjs'
 import { generateVisualization } from '../src/core/pipeline.mjs'
 const fixture = JSON.parse(await readFile(new URL('../examples/core-content-v1.json', import.meta.url), 'utf8'))
 test('normal, missing evidence, invalid references and paid mode', () => {
  assert.equal(assessVisualization(fixture).decision, 'supported')
- const missing=structuredClone(fixture); missing.sources[0].verified=false
- assert.equal(assessVisualization(missing).decision, 'insufficient_evidence')
+ const unreviewed=structuredClone(fixture); unreviewed.sources[0].verified=false
+ assert.equal(assessVisualization(unreviewed).decision, 'supported')
+ delete unreviewed.sources[0].verified
+ const result=assessVisualization(unreviewed)
+ assert.equal(result.decision,'supported')
+ assert.deepEqual(result.source_review.pending_source_refs,['s1'])
+ assert.equal(result.source_review.blocks_generation,false)
+ assert.equal(normalizeInput(unreviewed).sources[0].verified,false)
+ assert.match(result.copyright_notice,/不替代授权/)
+ const missing=structuredClone(fixture); missing.nodes[0].source_refs=[]
+ assert.equal(assessVisualization(missing).decision,'insufficient_evidence')
+ assert.throws(()=>assessVisualization({...fixture,sources:[{...fixture.sources[0],verified:'yes'}]}),/boolean/)
  const bad=structuredClone(fixture); bad.nodes[0].source_refs=['missing']
  assert.throws(()=>assessVisualization(bad), /source_refs/)
  assert.throws(()=>assessVisualization({...fixture,constraints:{allow_paid:true}}), /free offline/)

@@ -78,13 +78,13 @@ export const main = {
     }
     agnes.registerTool({
       name: 'assess_visualization_feasibility',
-      description: 'Check a SciViz v1 content JSON for a free 2D workflow. Required: schema_version=1.0, title, goal, audience=undergraduate, sources[{id,citation,locator,excerpt,verified}], nodes[{id,label,explanation,source_refs}] (3-8), edges[{from,to,label,source_refs}]. verified is a human attestation: never invent it. No PDF parsing or scientific truth certification.',
+      description: 'Check SciViz v1 content JSON for a free 2D workflow. Required: schema_version=1.0, title, goal, audience=undergraduate, sources[{id,citation,locator,excerpt}], nodes[{id,label,explanation,source_refs}] (3-8), edges[{from,to,label,source_refs}]. Optional: content_kind=synthetic_example|paper_excerpt, source url and verified; illustration={kind:wave_interference,phase_degrees:0..360,source_refs:[source_id]} only for a sourced ideal linear wave explanation, never inferred just from a title. verified may be omitted or false: do not ask the user to verify sources before generating, and never invent human verification. It is a post-generation review hint, not copyright permission. Preserve source references. No PDF parsing or scientific truth certification.',
       parameters, meta: readOnlyMeta,
       execute: wrap((value) => assessVisualization(value)),
     })
     agnes.registerTool({
       name: 'generate_visualization',
-      description: 'Generate a free offline SciViz evidence bundle from the same content_json contract as assess_visualization_feasibility. Writes only a fresh evidence/sciviz-* folder in the bound workspace. Returns renderer_pending until the B renderer is installed; never claim HTML exists from that status.',
+      description: 'Generate a free offline SciViz diagram and interactive page directly from the same content_json contract as assess_visualization_feasibility; assessment runs internally, so a separate assessment call is optional. Omitted/false verified does not block generation: do not pause for human verification. Return the generated page path and then the copyright_notice and source_review hints. Copyright notice also appears at the page end; it does not grant permission. Writes only a fresh evidence/sciviz-* folder. Claim HTML exists only when status=rendered; missing sources or relationships are reported without inventing them.',
       parameters, meta: { ...configMeta, isConcurrencySafe: true },
       execute: wrap(async (value, toolCtx) => {
         const state = sessions.get(toolCtx)
