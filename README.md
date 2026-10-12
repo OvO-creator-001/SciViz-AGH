@@ -1,6 +1,6 @@
 # SciViz-AGH
 
-论文可视化可行性评估与互动式 3D 科普内容生成插件。
+论文可视化评估与科普内容生成插件。本轮实现免费离线的固定布局 2D 流程图和互动页面。
 
 本仓库用于项目协作与人员交接。所有贡献者必须遵守两条底线：
 
@@ -40,7 +40,17 @@
 
 ## 当前阶段
 
-仓库目前已具备交接治理骨架、AGH 插件通用基础设施和原生 trace 证据核验器。论文可视化评分、3D 生成和互动页面业务工具仍待实现。
+当前开发分支已具备规则评估核心、CLI、固定布局 SVG 和离线互动 HTML。输入需要人工整理与核对；示例为教学合成内容。真实 AGH 宿主验收、真实论文核对与正式发布仍待完成；不提供 3D 或自动论文解析。
+
+## B 侧页面快速运行
+
+```powershell
+node examples/b-side/generate-demo.mjs
+node src/cli.mjs generate examples/core-content-v1.json
+```
+
+在返回的新目录中双击 interactive.html。静态 diagram.svg 可独立阅读；旧产物不会覆盖。
+接口见 [B 交接](docs/architecture/B_RENDERER_HANDOFF.md)，样例、验证限制与录制草稿见 [B 演示指南](docs/product/B_DEMO_GUIDE.md)。
 
 ## 开发验证
 

@@ -6,7 +6,9 @@
 
 | 日期 | 更新 | 状态 | 快速入口 |
 |---|---|---|---|
-| 2026-10-12 | MIT授权，AGH安装/信任/启用及三次真实工具调用通过 | A02接入已通过；生成仍为renderer_pending | [验收记录](docs/architecture/AGH_REGISTRATION_012.md) · [技术日志](changes/20261012-1750-agh-native-registration.md) |
+| 2026-10-12 | A/B代码已进入集成：AGH接入加离线SVG/互动页 | PR #4代码已审查并合入A开发分支；等待真实AGH渲染联调证据 | [PR #3](https://github.com/OvO-creator-001/SciViz-AGH/pull/3) · [B交接](docs/architecture/B_RENDERER_HANDOFF.md) |
+| 2026-10-12 | MIT授权，AGH安装/信任/启用及三次真实工具调用通过 | A02接入已通过；该次历史生成状态为renderer_pending | [验收记录](docs/architecture/AGH_REGISTRATION_012.md) · [技术日志](changes/20261012-1750-agh-native-registration.md) |
+| 2026-10-12 | B侧固定SVG、离线互动页与契约适配 | PR #4代码已由A审查并合入开发分支；正式录制待完成 | [PR #4](https://github.com/OvO-creator-001/SciViz-AGH/pull/4) · [B交接](docs/architecture/B_RENDERER_HANDOFF.md) · [演示指南](docs/product/B_DEMO_GUIDE.md) · [技术日志](changes/20261012-1930-b-svg-interactive.md) |
 | 2026-10-12 | 根目录统一更新索引与README入口 | 随PR #3上传；详细记录持续归changes/ | [本次技术日志](changes/20261012-1721-root-update-index.md) |
 | 2026-10-12 | A侧免费评估核心、CLI、AGH业务工具代码及B侧渲染契约 | PR #3待另一方审查；真实AGH接入后续已通过；B侧联调未完成 | [PR #3](https://github.com/OvO-creator-001/SciViz-AGH/pull/3) · [交接说明](docs/architecture/A_CORE_HANDOFF_V1.md) · [技术细节](changes/20261012-1711-a-core-pipeline.md) |
 | 2026-10-12 | AGH基础设施、会话隔离、工作区发现与trace核验 | PR #1待另一方审查；自动检查通过 | [PR #1](https://github.com/OvO-creator-001/SciViz-AGH/pull/1) · [架构说明](docs/architecture/AGH_FOUNDATION.md) · [技术细节](changes/20261012-1600-reuse-agh-foundation.md) |
@@ -15,8 +17,8 @@
 ## 对方现在可以做什么
 
 1. 先审查并合并PR #1；PR #3以它为基础。
-2. B侧根据A_CORE_HANDOFF_V1.md实现src/render/index.mjs，导出renderVisualization({ content, assessment })。
-3. 在PR #3评论确认或提出契约修改，不要在两个分支同时修改同一文件。
+2. A/B渲染契约已接入；下一步复核真实AGH rendered证据和真实论文案例。
+3. 后续共同修改基于feat/a-core-pipeline，避免继续分叉同一文件。
 4. PR #2用于方案和任务安排，可独立审查；合并冲突时保留README、TASKS.md和本索引入口。
 
 ## 更新规则
