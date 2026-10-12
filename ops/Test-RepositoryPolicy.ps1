@@ -12,7 +12,8 @@ $allowedRootFiles = @(
     "CHANGELOG.md",
     "LICENSE",
     "package.json",
-    "README.md"
+    "README.md",
+    "UPDATES.md"
 )
 $allowedRootDirectories = @(
     ".github",
