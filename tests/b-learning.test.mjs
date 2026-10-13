@@ -1,8 +1,9 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFile, mkdtemp, rm } from 'node:fs/promises'
+import { readFile, writeFile, mkdir, mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { join, dirname } from 'node:path'
+import { draftRecord } from '../src/agh/draft-store.mjs'
 import { registerLearningTools, resolveAnalysisRoot } from '../src/agh/learning-tools.mjs'
 import { researchTerm, parseBingResults } from '../src/agh/research.mjs'
 import { normalizeInput, assessVisualization } from '../src/core/assessment.mjs'
@@ -115,4 +116,41 @@ test('staged rendering uses the current AGH workspace without a source checkout,
   assert.deepEqual(calls,[ctx.cwd])
   await assert.rejects(resolveAnalysisRoot(ctx,'D:/outside'),{code:'EACCES'})
   assert.deepEqual(calls,[ctx.cwd,'D:/outside'])
+})
+
+test('draft persistence: reconnect restores revisions, isolates sessions and propagates Host denial', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'sciviz-reconnect-'))
+  const ctx = { cwd: root, session: { key: 'reconnect-a' }, fs: {
+    read: path => readFile(path),
+    write: async (path, bytes) => { await mkdir(dirname(path), { recursive: true }); await writeFile(path, bytes) },
+  } }
+  const open = () => {
+    const tools = new Map()
+    const lifecycle = registerLearningTools({ registerTool: t => tools.set(t.name, t) }, { resolveRoot: async () => root })
+    return { lifecycle, call: (name, args, context = ctx) => tools.get(name).execute(args, context) }
+  }
+  try {
+    let host = open()
+    const started = await host.call('start_sciviz_analysis', { title: fixture.title, text: fixture.sources[0].excerpt, citation: '教学样例', locator: '第1段', mode: 'popular' })
+    const draft_id = started.structured.draft_id
+    const c = structuredClone(fixture); delete c.sources
+    assert.equal((await host.call('save_sciviz_analysis', { draft_id, expected_revision: 0, content_json: JSON.stringify(c) })).structured.revision, 1)
+    host.lifecycle.clear(ctx)
+    host = open()
+    assert.equal((await host.call('get_sciviz_draft', { draft_id })).structured.revision, 1)
+    assert.equal((await host.call('get_sciviz_draft', { draft_id }, { ...ctx, session: { key: 'other' } })).details.code, 'DRAFT_NOT_FOUND')
+    const before = await readFile(draftRecord(ctx).path, 'utf8')
+    const denied = { ...ctx, fs: { ...ctx.fs, write: async () => { throw Object.assign(new Error('Host denied'), { code: 'E_FS_DENIED' }) } } }
+    assert.equal((await host.call('save_sciviz_analysis', { draft_id, expected_revision: 1, content_json: JSON.stringify(c) }, denied)).details.code, 'E_FS_DENIED')
+    assert.equal(await readFile(draftRecord(ctx).path, 'utf8'), before)
+    assert.equal((await host.call('get_sciviz_draft', { draft_id })).structured.revision, 1)
+    c.learning.summary.popular = '重连后继续修改。'
+    assert.equal((await host.call('save_sciviz_analysis', { draft_id, expected_revision: 1, content_json: JSON.stringify(c) })).structured.revision, 2)
+    host = open()
+    const rendered = (await host.call('render_sciviz_draft', { draft_id, expected_revision: 2 })).structured
+    assert.equal(rendered.status, 'rendered')
+    assert.match(await readFile(rendered.interactive_html_path, 'utf8'), /重连后继续修改/)
+    await writeFile(draftRecord(ctx).path, '{}')
+    assert.equal((await host.call('get_sciviz_draft', { draft_id })).isError, true)
+  } finally { await rm(root, { recursive: true, force: true }) }
 })

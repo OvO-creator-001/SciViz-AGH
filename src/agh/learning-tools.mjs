@@ -4,6 +4,7 @@ import { researchTerm } from './research.mjs'
 import { normalizeInput } from '../core/assessment.mjs'
 import { generateVisualization } from '../core/pipeline.mjs'
 import { loadRenderer } from '../core/renderer-adapter.mjs'
+import { draftRecord, readDrafts, writeDrafts } from './draft-store.mjs'
 
 const T = (kind, extra) => ({ [Symbol.for('TypeBox.Kind')]: kind, ...extra })
 const string = maxLength => T('String', { type: 'string', minLength: 1, maxLength })
@@ -44,7 +45,24 @@ export function registerLearningTools(agnes, { resolveRoot }) {
   const register = (name, description, parameters, run, overrides = {}) => agnes.registerTool({
     name, description, parameters, meta: { ...meta, ...overrides },
     execute: async (args, ctx) => {
-      try { ctx.signal?.throwIfAborted(); return result(await run(args, ctx)) }
+      try {
+        ctx.signal?.throwIfAborted()
+        const record = draftRecord(ctx)
+        if (record) {
+          const restored = await readDrafts(ctx, record)
+          const current = sessions.get(ctx)
+          current.clear()
+          for (const [id, draft] of restored) current.set(id, draft)
+        }
+        let output, failure
+        try { output = await run(args, ctx) } catch (error) { failure = error }
+        if (record && name !== 'get_sciviz_draft') {
+          try { await writeDrafts(ctx, record, sessions.get(ctx)) }
+          catch (error) { sessions.clear(ctx); throw error }
+        }
+        if (failure) throw failure
+        return result(output)
+      }
       catch (e) { if (ctx.signal?.aborted) throw e; return { isError: true, content: [{ type: 'text', text: `${e.code ?? 'ANALYSIS_ERROR'}: ${e.message}` }], details: { code: e.code ?? 'ANALYSIS_ERROR' } } }
     },
   })
@@ -97,7 +115,7 @@ export function registerLearningTools(agnes, { resolveRoot }) {
       checks: { structure_and_refs: 'passed', scientific_accuracy: 'not_verified', term_count: content.learning.terms.length, research: draft.attempts },
       next_action: 'AGH 模型现在检查原文一致性、术语来源与类比边界；可再次 save 修订文字/illustration，或 render_sciviz_draft。' }
   })
-  register('get_sciviz_draft', 'Read the current session draft and revision for further AGH model refinement; old rendered pages remain unchanged. Drafts are session memory; generated content.json is the durable output.', object({ draft_id: string(64) }, ['draft_id']), (args, ctx) => {
+  register('get_sciviz_draft', 'Read the current session draft and revision for further AGH model refinement; old rendered pages remain unchanged. Drafts recover from Host-backed records in the same workspace and session; generated content.json remains the durable output.', object({ draft_id: string(64) }, ['draft_id']), (args, ctx) => {
     const d = draftFor(ctx, args.draft_id)
     return { draft_id: d.id, revision: d.revision, content: d.content, sources: d.content ? undefined : d.sources, research: d.attempts, history: d.history, last_render: d.last_render }
   }, { isReadOnly: true, replay: 'safe' })

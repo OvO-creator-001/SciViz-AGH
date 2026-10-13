@@ -23,6 +23,7 @@ dist/
 Thumbs.db
 
 # Runtime and generated temporary files
+.sciviz-drafts/
 *.log
 tmp/
 work/

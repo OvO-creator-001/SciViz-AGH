@@ -13,7 +13,7 @@ AGH 模型先通过已有 document_read 读取上传 PDF，或读取用户文本
 5. **AGH 模型审阅与优化**：检查返回的概述和结构信息，必要时再次 save。不要求模型第一次调用就写完所有内容。
 6. `render_sciviz_draft({draft_id,expected_revision})`：用保存好的内容生成新产物。后续 `get_sciviz_draft({draft_id})` → 模型编辑 → save → render，保留旧页面。
 
-每会话最多6份草稿、每份最多12次检索/30次修订、最多20条来源。草稿在内存中按会话隔离，重启后不保留；生成的 content.json 与 analysis-record.json 是持久记录。版本冲突必须先 get，不自动覆盖。新会话可用生成的 content.json 经原 generate_visualization 重渲染；重新进行受控检索需要新草稿。
+每会话最多6份草稿、每份最多12次检索/30次修订、最多20条来源。0.4.1 起通过 AGH Host 在当前工作区 `.sciviz-drafts` 保存按会话和工作区隔离的恢复记录；同一会话重连后读取，权限拒绝和损坏记录明确失败。没有 Host 文件接口的离线上下文仍使用内存。旧 0.4.0 丢失的草稿不能恢复。记录含原文摘录和分析，不应上传 Git。生成的 content.json 与 analysis-record.json 继续保留。版本冲突必须先 get，不自动覆盖；禁止并发修订同一草稿。新会话可用生成的 content.json 经原 generate_visualization 重渲染；重新进行受控检索需要新草稿。
 
 ## 内容字段（向后兼容，可整体省略 learning）
 
