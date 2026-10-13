@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os'
 import { join, dirname } from 'node:path'
 import { draftRecord } from '../src/agh/draft-store.mjs'
 import { registerLearningTools, resolveAnalysisRoot } from '../src/agh/learning-tools.mjs'
-import { researchTerm, parseBingResults } from '../src/agh/research.mjs'
+import { researchTerm, parseBingResults, buildResearchQuery, textbookFor, articleExcerpt } from '../src/agh/research.mjs'
 import { normalizeInput, assessVisualization } from '../src/core/assessment.mjs'
 import { renderVisualization } from '../src/render/index.mjs'
 const fixture = JSON.parse(await readFile(new URL('../examples/learning-v4/content.json', import.meta.url), 'utf8'))
@@ -153,4 +153,63 @@ test('draft persistence: reconnect restores revisions, isolates sessions and pro
     await writeFile(draftRecord(ctx).path, '{}')
     assert.equal((await host.call('get_sciviz_draft', { draft_id })).isError, true)
   } finally { await rm(root, { recursive: true, force: true }) }
+})
+
+test('academic research disambiguates terms and rejects dictionaries, unrelated hits and duplicate URLs', async () => {
+  const li = (url,title,excerpt) => `<li class="b_algo"><h2><a href="${url}">${title}</a></h2><p>${excerpt}</p></li>`
+  const html = [
+    li('https://dictionary.cambridge.org/state','STATE 中文翻译：剑桥词典','state 英文单词'),
+    li('https://example.edu/music','Music research','An unrelated subject'),
+    li('https://blog.example.org/state','State tutorial','State space model explained'),
+    li('https://example.edu/state','State space model','State estimation for tracking'),
+    li('https://example.edu/state','Duplicate','State estimation'),
+    li('https://example.ac.cn/state','State estimation','State estimation for tracking in a research institute'),
+  ].join('')
+  const found = parseBingResults(html,'https://cn.bing.com/search?q=state','2026-10-13T00:00:00Z',{academic:true,query:'state',context:'tracking'})
+  assert.deepEqual(found.map(s=>s.url), ['https://example.edu/state','https://example.ac.cn/state'])
+  let request
+  const ctx = {net:{fetchPublic:async url=>{request=new URL(url);return { ...response,url,body:{kind:'html',content:html} }}}}
+  await assert.rejects(researchTerm({query:'state'},ctx),{code:'TERM_CONTEXT_REQUIRED'})
+  assert.equal(request,undefined)
+  assert.equal((await researchTerm({query:'state',context:'tracking'},ctx)).length,2)
+  assert.match(request.searchParams.get('q'),/state tracking 定义 原理 教材/)
+  assert.match(request.searchParams.get('q'),/site:edu.cn/)
+  assert.doesNotMatch(request.href,/wikipedia/)
+  assert.throws(()=>buildResearchQuery('state','x'.repeat(121)),{code:'INVALID_INPUT'})
+  await assert.rejects(researchTerm({query:'state',context:'tracking'},{net:{fetchPublic:async url=>({...response,url,body:{kind:'html',content:li('https://dict.cn/state','state 英文单词','词典翻译')}})}}),{code:'SEARCH_NO_EXCERPTS'})
+})
+
+test('Chinese textbook routing reads real Host content and does not infer state/IoU from bare words', async () => {
+  assert.equal(textbookFor('Transformer','电力工程 变压器'),null)
+  assert.equal(textbookFor('intersection','计算机视觉'),null)
+  assert.equal(textbookFor('state','目标跟踪'),null)
+  assert.match(textbookFor('交并比 IoU','计算机视觉'),/anchor.html$/)
+  let request
+  const paragraph='注意力机制将查询与键进行比较，得到注意力权重，再对值进行加权求和。权重用于在当前查询条件下选择相关信息，而不是证明模型解释具有因果性。'
+  const html=`<title>教材章节</title><nav>导航无关词</nav><main><p>Open the notebook in Colab</p><p>${paragraph}</p></main>`
+  const ctx={net:{fetchPublic:async url=>{request=url;return {...response,url,body:{kind:'html',content:html}}}}}
+  const sources=await researchTerm({query:'Transformer',context:'计算机视觉'},ctx)
+  assert.equal(request,'https://zh.d2l.ai/chapter_attention-mechanisms/transformer.html')
+  assert.equal(sources[0].excerpt,paragraph)
+  assert.match(sources[0].citation,/教材章节/)
+  assert.equal(articleExcerpt(html),paragraph)
+  await assert.rejects(researchTerm({query:'Transformer',context:'计算机视觉'},{net:{fetchPublic:async()=>{throw Object.assign(new Error('Host denied'),{code:'E_NET_DENIED'})}}}),{code:'E_NET_DENIED'})
+})
+
+test('page puts a reading guide before hierarchy and cites both explanations; unused searches are candidates', () => {
+  const c = structuredClone(fixture)
+  c.visualization = {layout:'hierarchy'}
+  c.sources.push({id:'web_1',citation:'机构背景正文',locator:'第1节',excerpt:'教学背景解释。',kind:'background',url:'https://example.edu/lesson'}, {id:'web_2',citation:'未采用候选',locator:'搜索摘要',excerpt:'没有用于解释。',kind:'background'})
+  c.learning.terms[0].source_refs=['web_1']
+  const html=renderVisualization(c,assessVisualization(c)).html
+  assert.ok(html.indexOf('id="reading-guide-title"') < html.indexOf('class="studio"'))
+  assert.equal((html.match(/如何阅读这张图/g)??[]).length,1)
+  assert.match(html, /适用范围与限制/)
+  const firstTerm = html.slice(html.indexOf('class="card term-card"'),html.indexOf('</article>',html.indexOf('class="card term-card"')))
+  assert.equal((firstTerm.match(/aria-label="本段解释来源"/g)??[]).length,2)
+  assert.equal((firstTerm.match(/\[web_1\]/g)??[]).length,3)
+  assert.match(html,/解释中引用的联网背景/)
+  assert.match(html,/未用于解释的检索候选（1）/)
+  assert.ok(html.indexOf('未采用候选')>html.indexOf('class="search-candidates"'))
+  assert.match(html,/id="source-1"/)
 })

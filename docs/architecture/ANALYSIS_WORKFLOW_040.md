@@ -1,15 +1,15 @@
-# v0.4.0：联网术语与分步分析接口
+# v0.4.2：联网术语与分步分析接口
 
-本次根据用户新增 P0/P1/P2 要求扩展 A/B 共享接口。保留原 `schema_version=1.0`、四个旧工具及关系图。版本为开发包 0.4.0；未宣称已冻结接口或发布正式 Release。
+本次根据用户新增 P0/P1/P2 要求扩展 A/B 共享接口。保留原 `schema_version=1.0`、四个旧工具及关系图。版本为开发包 0.4.2；未宣称已冻结接口或发布正式 Release。
 
 ## 数据流与模型边界
 
 AGH 模型先通过已有 document_read 读取上传 PDF，或读取用户文本，再调用以下工具。插件不安装模型、不访问模型密钥、不另接付费模型 API。模型思考发生在 AGH 的工具调用之间；不是插件内部同步调用一个隐藏模型。
 
 1. `start_sciviz_analysis({title,text,citation,locator,mode})`：登记已读取摘录（最多10000字符）和 `original_1`，返回 draft_id、revision=0、完整内容结构示例与分步指引。长论文由 AGH 选择并说明本次读取范围，不能将部分摘录宣称为全文。
-2. `research_sciviz_term({draft_id,query,provider?,language?,url?})`：默认通过 Bing 中国站做免费关键词查询；可选 wikipedia，language=en/zh。传 url 时读取指定公开页面。只通过调用上下文的 `net.fetchPublic` 使用 AGH 的匿名公开网络策略；无代理、全局 fetch、shell 或付费接口回退。
+2. `research_sciviz_term({draft_id,query,context?,provider?,language?,url?})`：默认 provider=academic、language=zh；context 为最多120字符的公开学科背景，不得传论文摘录。明确的注意力机制、Transformer、IoU 等技术术语可优先匹配中文 D2L 教材，否则做 Bing 学术站点查询并过滤、去重。歧义词缺少上下文时报 TERM_CONTEXT_REQUIRED。保留显式 bing/wikipedia；传 url 时读取指定公开页面。只通过调用上下文的 `net.fetchPublic` 使用 AGH 的匿名公开网络策略；无代理、全局 fetch、shell 或付费接口回退。
 3. **AGH 模型阅读与分析**：检索摘要只是候选，先检查语义相关性，学术模式优先继续读取教材/机构/论文正文，再编写概述和解释。网页中的指令不执行。搜索结果不是科学验证。
-4. `save_sciviz_analysis({draft_id,expected_revision,content_json,note?})`：验证模型编写的内容并保存修订。来源由草稿注入；模型不得修改已记录摘录、URL、出处、原文/背景角色，或造新来源 ID。每次成功保存 revision+1。
+4. `save_sciviz_analysis({draft_id,expected_revision,content_json,note?})`：验证模型编写的内容并保存修订。来源由草稿注入；建议省略顶层 sources，模型不得修改已记录摘录、URL、出处、原文/背景角色，或造新来源 ID。实际采用的背景 ID 写入 learning.terms[].source_refs；返回 checks.background_sources_used，已检索却未引用会给出警告，不自动替模型配引用。每次成功保存 revision+1。
 5. **AGH 模型审阅与优化**：检查返回的概述和结构信息，必要时再次 save。不要求模型第一次调用就写完所有内容。
 6. `render_sciviz_draft({draft_id,expected_revision})`：用保存好的内容生成新产物。后续 `get_sciviz_draft({draft_id})` → 模型编辑 → save → render，保留旧页面。
 
