@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto'
 import { normalizeInput, assessVisualization } from './assessment.mjs'
 import { pageAccess } from './page-link.mjs'
 
-export async function generateVisualization(value, { root, renderer = null, executionOrigin = 'cli' } = {}) {
+export async function generateVisualization(value, { root, renderer = null, executionOrigin = 'cli', analysisRecord = null } = {}) {
   const input = normalizeInput(value)
   const assessment = assessVisualization(input)
   if (!['cli', 'agh'].includes(executionOrigin)) throw new Error('invalid execution origin')
@@ -22,14 +22,17 @@ export async function generateVisualization(value, { root, renderer = null, exec
   }
   await save('content.json', JSON.stringify(input, null, 2) + '\n')
   await save('assessment.json', JSON.stringify(assessment, null, 2) + '\n')
+  if (analysisRecord) await save('analysis-record.json', JSON.stringify(analysisRecord, null, 2) + '\n')
   let status = assessment.decision === 'supported' ? 'renderer_pending' : 'evidence_report'
   let rendererError = null
   if (assessment.decision === 'supported' && renderer) {
     try {
       const output = await renderer({ content: structuredClone(input), assessment: structuredClone(assessment) })
       if (!output || typeof output.svg !== 'string' || typeof output.html !== 'string' || !/<svg[\s>]/i.test(output.svg) || !/<html[\s>]/i.test(output.html) || output.svg.length > 2000000 || output.html.length > 2000000) throw new Error('renderer must return SVG and HTML strings under 2MB each')
+      if (output.figures !== undefined && (!Array.isArray(output.figures) || output.figures.length > 16 || output.figures.some(f => !/^teaching-[1-8]-(academic|popular)\.svg$/.test(f.name) || typeof f.svg !== 'string' || f.svg.length > 100000 || !f.svg.startsWith('<svg ')) || new Set(output.figures.map(f => f.name)).size !== output.figures.length)) throw new Error('invalid teaching figure outputs')
       await save('diagram.svg', output.svg)
       await save('interactive.html', output.html)
+      for (const figure of output.figures ?? []) await save(figure.name, figure.svg)
       status = 'rendered'
     } catch (error) { status = 'renderer_failed'; rendererError = { code: 'RENDERER_FAILED', message: String(error.message).slice(0, 500) } }
   }

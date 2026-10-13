@@ -1,0 +1,3 @@
+# Preserve evidence records without newline conversion.
+*.json -text
+*.jsonl -text

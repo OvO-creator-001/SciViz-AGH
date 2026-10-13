@@ -1,10 +1,10 @@
 {
   "name": "sciviz-agh",
-  "version": "0.3.1",
+  "version": "0.4.2",
   "private": true,
   "type": "module",
   "license": "MIT",
-  "description": "SciViz-AGH plugin foundation and evidence verification tools",
+  "description": "SciViz-AGH staged reading, public terminology research and offline academic/popular explainers",
   "engines": {
     "node": ">=24"
   },

@@ -3,6 +3,7 @@ import { createWorkspaceLocator } from './workspace-discovery.mjs'
 import { assessVisualization } from '../core/assessment.mjs'
 import { generateVisualization } from '../core/pipeline.mjs'
 import { loadRenderer } from '../core/renderer-adapter.mjs'
+import { registerLearningTools, resolveAnalysisRoot } from './learning-tools.mjs'
 
 const T = (kind, extra = {}) => ({ [Symbol.for('TypeBox.Kind')]: kind, ...extra })
 const STRING = (maxLength = 2048) => T('String', { type: 'string', minLength: 1, maxLength })
@@ -84,7 +85,7 @@ export const main = {
     })
     agnes.registerTool({
       name: 'generate_visualization',
-      description: 'Generate a free offline SciViz diagram and interactive page directly from the same content_json contract as assess_visualization_feasibility (including visualization layouts/charts and node visual_role); auto-selects process/hierarchy/network from supplied relationships; assessment runs internally, so a separate assessment call is optional. Omitted/false verified does not block generation: do not pause for human verification. When status=rendered, put open_page_markdown on its own line in the final answer as a clickable “打开互动页面” link; also report interactive_html_path as a fallback, then copyright_notice and source_review. Do not replace the page link with the manifest path. Copyright notice also appears at the page end; it does not grant permission. Writes only a fresh evidence/sciviz-* folder. Claim HTML exists only when status=rendered; missing sources or relationships are reported without inventing them.',
+      description: 'Render already prepared SciViz content_json as a free offline SVG/HTML. For PDF/text analysis, summaries, terminology research, academic/popular modes or iterative model refinement, FIRST use start_sciviz_analysis and its research/save/render workflow. This direct renderer does not analyze raw papers or do web research. Supports the existing graph/chart contract and optional learning={mode,summary:{academic,popular,source_refs},key_points:[same],terms:[{id,term,academic,popular,analogy,caveat,source_refs,illustration:none|topology|fractal|quantum_wave|harmonic_motion|protein_structure}]}. Omitted/false verified does not block generation. When rendered, put open_page_markdown on its own line and also report interactive_html_path, copyright_notice and source_review. Writes a fresh evidence/sciviz-* folder; no overwrites.',
       parameters, meta: { ...configMeta, isConcurrencySafe: true },
       execute: wrap(async (value, toolCtx) => {
         const state = sessions.get(toolCtx)
@@ -107,7 +108,11 @@ export const main = {
       meta: readOnlyMeta,
       execute: inspectScivizWorkspace,
     })
-    agnes.on('session_start', () => agnes.ctx.log.info('SciViz-AGH foundation ready.'))
-    agnes.on('shutdown', (_payload, hookCtx) => sessions.clear(hookCtx))
+    const learning = registerLearningTools(agnes, { resolveRoot: toolCtx => {
+      const state = sessions.get(toolCtx)
+      return resolveAnalysisRoot(toolCtx, state.rootSource === 'explicit' ? state.root : null)
+    } })
+    agnes.on('session_start', () => agnes.ctx.log.info('SciViz-AGH analysis and rendering ready.'))
+    agnes.on('shutdown', (_payload, hookCtx) => { sessions.clear(hookCtx); learning.clear(hookCtx) })
   },
 }

@@ -6,6 +6,10 @@
 
 | 日期 | 更新 | 状态 | 快速入口 |
 |---|---|---|---|
+| 2026-10-13 | v0.4.2 可分发安装 ZIP 与中文 README | 已打包并通过解压校验、工具注册和渲染检查；接收者实际安装待验证 | [安装包目录](releases/v0.4.2/) · [用户说明](releases/v0.4.2/README.md) · [打包记录](changes/20261013-2150-installable-zip.md) |
+| 2026-10-13 | v0.4.2：学术来源、行内引用与读图顺序 | 36项测试、Host教材读取与离线浏览器检查通过；AGH实际运行0.4.2，随PR #5供审查 | [验证](evidence/b-research-042/RESULTS.md) · [技术日志](changes/20261013-2120-research-reading.md) |
+| 2026-10-13 | v0.4.1：草稿重连恢复 | 33项测试通过，AGH实际运行0.4.1；随PR #5交付供审查，论文由用户测试 | [PR #5](https://github.com/OvO-creator-001/SciViz-AGH/pull/5) · [修复与安装记录](changes/20261013-1800-draft-recovery.md) |
+| 2026-10-13 | v0.4.0：联网术语、概述、学术/科普模式与分步修订 | feat/b-research-modes 待审查；32项测试、网页交互、真实Bing检索通过；AGH已安装，原生save/render联调因权限拒绝未完成 | [试用](docs/product/QUICKSTART_040.md) · [接口](docs/architecture/ANALYSIS_WORKFLOW_040.md) · [验证](evidence/b-learning-040/RESULTS.md) · [技术日志](changes/20261013-1430-staged-analysis.md) |
 | 2026-10-12 | v0.3.1：生成后直接打开页面 | 27项测试通过；真实AGH rendered，模型最终回复逐字展示Markdown链接和备用路径；上传A分支/PR #3，未合并 | [使用说明](docs/product/QUICKSTART_030.md) · [真实验证](evidence/agh-page-link-031/RESULTS.md) · [技术日志](changes/20261012-2315-clickable-page-entry.md) |
 | 2026-10-12 | v0.3.0：流程/分层/网络 + 三类数据图 | 26项测试、六类页面浏览器检查与真实AGH rendered 通过；上传A分支/PR #3，未合并 | [画廊与接口](docs/product/QUICKSTART_030.md) · [真实验证](evidence/agh-grammar-030/RESULTS.md) · [技术日志](changes/20261012-2300-multi-view-science-grammar.md) |
 | 2026-10-12 | v0.2.1：直接生成、版权页脚与科学图解升级 | 缺省/false verified 不阻塞；真实AGH rendered、浏览器交互与20项测试通过；通过PR #3交付 | [三分钟试用](docs/product/QUICKSTART_021.md) · [效果截图](evidence/agh-atlas-021/desktop.png) · [验证记录](evidence/agh-atlas-021/RESULTS.md) · [技术日志](changes/20261012-2235-direct-generate-science-atlas.md) |

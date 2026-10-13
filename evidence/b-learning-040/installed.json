@@ -1,0 +1,58 @@
+{
+  "operation": {
+    "operationId": "pkg-05880a6f65b4d9f614652c35c5d4d199",
+    "profile": "local-dev",
+    "operation": "update",
+    "packageId": "sciviz-agh",
+    "cancellable": false,
+    "retryable": false,
+    "state": "completed",
+    "progress": 100,
+    "startedAt": "2026-10-13T06:51:54.613Z",
+    "updatedAt": "2026-10-13T06:52:02.648Z",
+    "installed": {
+      "id": "sciviz-agh",
+      "version": "0.4.0",
+      "source": {
+        "type": "file",
+        "ref": "file:./work/sciviz-agh-0.4.0-research-20261013-cwd"
+      },
+      "integrity": "sha256-2def78c99eedc572ee9fe44cb36182dbe83b8a2009014450d2691b5f61fbd10a",
+      "trusted": true,
+      "desired": "enabled",
+      "actual": "running",
+      "actualVersion": "0.4.0",
+      "actualIntegrity": "sha256-2def78c99eedc572ee9fe44cb36182dbe83b8a2009014450d2691b5f61fbd10a",
+      "rollbackTarget": {
+        "version": "0.4.0",
+        "integrity": "sha256-af31ae81faf3b7d46afb63586b6c610e4c88e0105cb30b2e4eb1477a4c30d180",
+        "capabilityHash": "e3de4e5f2da4b8aa2650af5c4f822d397c2dadd7a6695e5071c0444d26a22b01"
+      },
+      "contributions": [],
+      "blockers": [],
+      "capabilityHash": "e3de4e5f2da4b8aa2650af5c4f822d397c2dadd7a6695e5071c0444d26a22b01"
+    }
+  },
+  "final": {
+    "id": "sciviz-agh",
+    "version": "0.4.0",
+    "source": {
+      "type": "file",
+      "ref": "file:./work/sciviz-agh-0.4.0-research-20261013-cwd"
+    },
+    "integrity": "sha256-2def78c99eedc572ee9fe44cb36182dbe83b8a2009014450d2691b5f61fbd10a",
+    "trusted": true,
+    "desired": "enabled",
+    "actual": "running",
+    "actualVersion": "0.4.0",
+    "actualIntegrity": "sha256-2def78c99eedc572ee9fe44cb36182dbe83b8a2009014450d2691b5f61fbd10a",
+    "rollbackTarget": {
+      "version": "0.4.0",
+      "integrity": "sha256-af31ae81faf3b7d46afb63586b6c610e4c88e0105cb30b2e4eb1477a4c30d180",
+      "capabilityHash": "e3de4e5f2da4b8aa2650af5c4f822d397c2dadd7a6695e5071c0444d26a22b01"
+    },
+    "contributions": [],
+    "blockers": [],
+    "capabilityHash": "e3de4e5f2da4b8aa2650af5c4f822d397c2dadd7a6695e5071c0444d26a22b01"
+  }
+}

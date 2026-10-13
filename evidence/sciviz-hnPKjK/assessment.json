@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "decision": "supported",
+  "recommended_format": "interactive_2d",
+  "missing_requirements": [],
+  "evidence_refs": [
+    "original_1"
+  ],
+  "source_review": {
+    "status": "pending",
+    "pending_source_refs": [
+      "original_1"
+    ],
+    "blocks_generation": false
+  },
+  "warnings": [
+    {
+      "code": "SOURCE_REVIEW_PENDING",
+      "source_refs": [
+        "original_1"
+      ],
+      "message": "来源核对为生成后的可选步骤。未核对资料可以生成示意图；生成不代表科学主张已被验证，关键结论请对照原文核查。"
+    }
+  ],
+  "copyright_notice": "版权与使用说明：本页根据输入资料自动生成。论文、图表、摘录及其他第三方材料的权利归原权利人所有；生成结果可能涉及复制、改编或传播等版权风险。生成不表示已获授权，本声明也不替代授权或自动免除责任。公开展示、发布或商业使用前，请核对原始许可、合理使用条件及署名要求；必要时取得授权。",
+  "limitations": [
+    "来源核对为生成后的可选步骤。未核对资料可以生成示意图；生成不代表科学主张已被验证，关键结论请对照原文核查。",
+    "本图只表达输入中的节点与关系；未进行自动论文解析、科学模拟或科学真实性验证。"
+  ],
+  "fallbacks": [
+    "static_svg",
+    "evidence_report"
+  ],
+  "external_cost": 0
+}

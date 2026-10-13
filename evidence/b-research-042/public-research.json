@@ -1,0 +1,42 @@
+{
+  "at": "2026-10-13T12:52:00.496Z",
+  "records": [
+    {
+      "args": {
+        "query": "Transformer",
+        "context": "计算机视觉 自注意力 目标跟踪"
+      },
+      "status": "failed",
+      "code": "SEARCH_NO_EXCERPTS",
+      "message": "未找到相关且可解析的来源。请用完整专业术语和短学科背景，或提供公开高校/研究机构/教材 URL；未把词典或无关结果算作知识。"
+    },
+    {
+      "args": {
+        "query": "state space model",
+        "context": "目标跟踪 状态估计"
+      },
+      "status": "failed",
+      "code": "SEARCH_NO_EXCERPTS",
+      "message": "未找到相关且可解析的来源。请用完整专业术语和短学科背景，或提供公开高校/研究机构/教材 URL；未把词典或无关结果算作知识。"
+    },
+    {
+      "args": {
+        "query": "注意力机制",
+        "url": "https://zh.d2l.ai/chapter_attention-mechanisms/attention-scoring-functions.html"
+      },
+      "status": "retrieved",
+      "sources": [
+        {
+          "citation": "公开网页：10.3. 注意力评分函数 — 动手学深度学习 2.0.0 documentation",
+          "url": "https://zh.d2l.ai/chapter_attention-mechanisms/attention-scoring-functions.html",
+          "locator": "网页文字摘录（需核对具体章节；未自动验证相关性）",
+          "excerpt": "10.3. 注意力评分函数 ¶ Colab [mxnet] Open the notebook in Colab Colab [pytorch] Open the notebook in Colab Colab [tensorflow] Open the notebook in Colab Colab [paddle] Open the notebook in Colab SageMaker Studio Lab Open the notebook in SageMaker Studio Lab 10.2节 使用了高斯核来对查询和键之间的关系建模。 (10.2.6) 中的 高斯核指数部分可以视为 注意力评分函数 （attention scoring function）， 简称 评分函数 （scoring function）， 然后把这个函数的输出结果输入到softmax函数中进行运算。 通过上述步骤，将得到与键对应的值的概率分布（即注意力权重）。 最后，注意力汇聚的输出就是基于这些注意力权重的值的加权和。 从宏观来看，上述算法可以用来实现 图10.1.3 中的注意力机制框架。 图10.3.1 说明了 如何将注意力汇聚的输出计算成为值的加权和， 其中 \\(a\\) 表示注意力评分函数。 由于注意力权重是概率分布， 因此加权和其本质上是加权平均值。 图10.3.1 计算注意力汇聚的输出为值的加权和 ¶ 用数学语言描述，假设有一个查询 \\(\\mathbf{q} \\in \\mathbb{R}^q\\) 和 \\(m\\) 个“键－值”对 \\((\\mathbf{k}_1, \\mathbf{v}_1), \\ldots, (\\mathbf{k}_m, \\mathbf{v}_m)\\) ， 其中 \\(\\mathbf{k}_i \\in \\mathbb{R}^k\\) ， \\(\\mathbf{v}_i \\in \\mathbb{R}^v\\) 。 注意力汇聚函数 \\(f\\) 就被表示成值的加权和： (10.3.1) ¶ \\[f(\\mathbf{q}, (\\mathbf{k}_1, \\mathbf{v}_1), \\ldots, (\\mathbf{k}_m, \\mathbf{v}_m)) = \\sum_{i=1}^m \\alpha(\\mathbf{q}, \\mathbf{k}_i) \\mathbf{v}_i \\in \\mathbb{R}^v,\\] 其中查询 \\(\\mathbf{q}\\) 和键 \\(\\mathbf{k}_i\\) 的注意力权重（标量） 是通过注意力评分函数 \\(a\\) 将两个向量映射成标量， 再经过softmax运算得到的： (10.3.2) ¶ \\[\\alpha(\\mathbf{q}, \\mathbf{k}_i) = \\mathrm{softmax}(a(\\mathbf{q}, \\mathbf{k}_i)) = \\frac{\\exp(a(\\mathbf{q}, \\mathbf{k}_i))}{\\sum_{j=1}^m \\exp(a(\\mathbf{q}, \\mathbf{k}_j))} \\in \\mathbb{R}.\\] 正如上图所示，选择不同的注意力评分函数 \\(a\\) 会导致不同的注意力汇聚操作。 本节将介绍两个流行的评分函数，稍后将用他们来实现更复杂的注意力机制。 mxnet pytorch tensorflow paddle import math from mxnet import np , npx from mxnet.gluon import nn from d2l import mxnet as d2l npx . set_np () import math import torch from torch import nn from d2l import torch as d2l import tensorflow as tf from d2l import tensorflow as d2l import math import warnings from d2l import paddle as d2l warnings . filterwarnings ( \"ignore\" ) import paddle from paddle import nn 10.3.1. 掩蔽softmax操作 ¶ 正如上面提到的，softmax操作用于输出一个概率分布作为注意力权重。 在某些情况下，并非所有的值都应该被纳入到注意力汇聚中。 例如，为了在 9.5节 中高效处理小批量数据集， 某些文本序列被填充了没有意义的特殊词元。 为了仅将有意义的词元作为值来获取注意力汇聚， 可以指定一个有效序列长度（即词元的个数）， 以便在计算softmax时过滤掉超出指定范围的位置。 下面的 masked_softmax 函数 实现了这样的 掩蔽softmax操作 （masked softmax operation）， 其中任何超出有效长度的位置都被掩蔽并置为0。 mxnet pytorch tensorflow paddle #@save def masked_softmax ( X , valid_lens ): \"\"\"通过在最后一个轴上掩蔽元素来执行softmax操作\"\"\" # X:3D张量，valid_lens:1D或2D张量 if valid_lens is None : return npx . softmax ( X ) else : shape = X . shape if valid_lens . ndim == 1 : valid_lens = valid_lens . repeat ( shape [ 1 ]) else : valid_lens = valid_lens . reshape ( - 1 ) # 最后一轴上被掩蔽的元素使用一个非常大的负值替换，从而其softmax输出为0 X = npx . sequence_mask ( X . reshape ( - 1 , shape [ - 1 ]), valid_lens , True , value =- 1e6 , axis = 1 ) return npx . softmax ( X ) . reshape ( shape ) #@save def masked_softmax ( X , valid_lens ): \"\"\"通过在最后一个轴上掩蔽元素来执行softmax操作\"\"\" # X:3D张量，valid_lens:1D或2D张量 if valid_lens is None : return nn . functional . softmax ( X , dim =- 1 ) else : shape = X . shape if valid_lens . dim () == 1 : valid_lens = torch . repeat_interleave ( valid_lens , shape [ 1 ]) else : valid_lens = valid_lens . reshape ( - 1 ) # 最后一轴上被掩蔽的元素使用一个非常大的负值替换，从而其softmax输出为0 X = d2l . sequence_mask ( X . reshape ( - 1 , shape [ - 1 ]), valid_lens , value =- 1e6 ) return nn . functional . softmax ( X . reshape ( shape ), dim =- 1 ) #@save def masked_softmax ( X , valid_lens ): \"\"\"通过在最后一个轴上掩蔽元素来执行softmax操作\"\"\" # X:3D张量，valid_lens:1D或2D张量 if valid_lens is None : return tf . nn . softmax ( X , axis =- 1 ) else : shape = X . shape if len ( valid_lens . shape ) == 1 : valid_lens = tf . repeat ( valid_lens , repeats = shape [ 1 ]) else : valid_lens = tf . reshape ( valid_lens , shape =- 1 ) # 最后一轴上被掩蔽的元素使用一个非常大的负值替换，从而其softmax输出为0 X = d2l . sequence_mask ( tf . reshape ( X , shape = ( - 1 , shape [ - 1 ])), valid_lens , value =- 1e6 ) return tf . nn . softmax ( tf . reshape ( X , shape = shape ), axis =- 1 ) #@save def masked_softmax ( X , valid_lens ): \"\"\"通过在最后一个轴上掩蔽元素来执行softmax操作\"\"\" # X:3D张量，valid_lens:1D或2D张量 if valid_lens is None : return nn . functional . softmax ( X , axis =- 1 ) else : shape = X . shape if valid_lens . dim () == 1 : valid_lens = paddle . repeat_interleave ( valid_lens , shape [ 1 ]) else : valid_lens = valid_lens . reshape (( - 1 ,)) # 最后一轴上被掩蔽的元素使用一个非常大的负值替换，从而其softmax输出为0 X = d2l . sequence_mask ( X . reshape (( - 1 , shape [ - 1 ])), valid_lens , value =- 1e6 ) return nn . functional . softmax ( X . reshape ( shape ), axis =- 1 ) 为了演示此函数是如何工作的， 考虑由两个 \\(2 \\times 4\\) 矩阵表示的样本， 这两个样本的有效长度分别为 \\(2\\) 和 \\(3\\) 。 经过掩蔽softmax操作，超出有效长度的值都被掩蔽为0。 mxnet pytorch tensorflow paddle masked_softmax ( np . random . uniform ( size = ( 2 , 2 , 4 )), np . array ([ 2 , 3 ])) [ 07 : 09 : 32 ] ../ src / storage / storage . cc : 196 : Using Pooled ( Naive ) StorageManager for CPU array ([[[ 0.488994 , 0.511006 , 0. , 0. ], [ 0.43654838 , 0.56345165 , 0. , 0. ]], [[ 0.28817102 , 0.3519408 , 0.3598882 , 0. ], [ 0.29034293 , 0.25239873 , 0.45725834 , 0. ]]]) masked_softmax ( torch . rand ( 2 , 2 , 4 ), torch . tensor ([ 2 , 3 ])) tensor ([[[ 0.5980 , 0.4020 , 0.0000 , 0.0000 ], [ 0.5548 , 0.4452 , 0.0000 , 0.0000 ]], [",
+          "kind": "background",
+          "verified": false,
+          "retrieved_at": "2026-10-13T12:51:57.618Z",
+          "truncated": true
+        }
+      ]
+    }
+  ]
+}

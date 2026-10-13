@@ -6,7 +6,7 @@
 
 **协作者快速入口：[最新更新、PR状态与下一步](UPDATES.md)。**
 
-**新版试用：[v0.3.0/0.3.1 六类图解与页面入口](docs/product/QUICKSTART_030.md) · [流程截图](evidence/visual-grammar-030/method.png) · [真实页面入口证据](evidence/agh-page-link-031/RESULTS.md)。**
+**新版试用：[v0.4.0 联网术语、概述与双模式](docs/product/QUICKSTART_040.md) · [接口与模型流程](docs/architecture/ANALYSIS_WORKFLOW_040.md) · [实际验证及未完成项](evidence/b-learning-040/RESULTS.md)。**
 
 1. **历史版本只新增、不覆盖**：每次正式交接创建新的 `releases/vX.Y.Z/` 快照；已提交的版本目录禁止修改、重命名或删除。
 2. **技术变更可追溯**：每个 PR 必须同时新增 `changes/` 下的技术更新条目，写清实现、接口/数据变化、验证方法、风险与回滚方式。
@@ -42,13 +42,14 @@
 
 ## 当前阶段
 
-当前开发包 `sciviz-agh@0.3.1` 在 v0.3.0 多视图渲染基础上，为成功生成结果增加可点击页面 Markdown、文件 URI 和绝对路径备用入口。自动按连接结构选择流程/分层/网络，支持有来源的柱状/折线/散点图、角色符号、逐步讲解、精确数值表和来源跳转。省略 `verified` 仍直接生成，结果和页面末尾保留版权与核对提示。
+当前开发包 `sciviz-agh@0.4.0` 新增 AGH 分步分析草稿、免费公开术语检索、页面概述、学术/科普文字切换和五类SVG教学示意。模型可在搜索、保存、审阅、修订和渲染之间继续思考；旧页面不覆盖。分步输出默认使用当前 AGH 工作目录，无需另找源码仓库。原关系图、数据图、页面入口与未核对来源提示继续兼容。
 
-输入仍需整理为带来源的结构化材料；当前验收使用团队合成教学内容。任意论文的专业定制插图、自动 PDF 解析、3D、科学真实性认证尚未实现。真实案例复核、正式录屏和发布仍待完成。
+AGH已有读取工具负责PDF/文本，AGH模型负责解释和结构化分析；插件负责受控检索、草稿与纯渲染。真实联网和页面交互已验证；完整原生模型修订渲染因AGH权限拒绝尚未通过，不能按完成报告。任意专业插图、真实蛋白质重建、3D和科学真实性认证未实现；真实论文复核、正式录屏和发布待完成。
 
 ## B 侧页面快速运行
 
 ```powershell
+node examples/learning-v4/generate-demo.mjs
 node examples/generate-gallery-v3.mjs
 node src/cli.mjs generate examples/gallery-v3/model-comparison.json
 node src/cli.mjs generate examples/wave-explainer-v2.json

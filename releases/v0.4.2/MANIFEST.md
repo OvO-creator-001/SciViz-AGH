@@ -1,0 +1,53 @@
+# v0.4.2 分发包清单
+
+- 源码提交：9964da2750e6082acabe7c01ab74e12a01c04d87
+- 构建时间：2026-10-13T21:46:03.5683204+08:00
+- ZIP：sciviz-agh-0.4.2.zip
+- ZIP SHA-256：d2ff8a407262135516d8ad5e802a327324833d348ccbf9d9dc0c07f847ff4d0e
+- README.md 为用户安装说明；包内同名说明一致。
+- package.json、src、LICENSE、ops 验证器来自上述提交；安装说明和演示为配套材料。
+- 不包含用户草稿、凭据、node_modules 或个人论文；不覆盖旧快照。
+- 交付人：miku / Codex；其他电脑安装签收待接收者完成。
+- 本清单不是 GitHub Release 或已合并声明。
+
+## ZIP 内文件 SHA-256
+
+CHECKSUMS.sha256 不包含自身；其余文件如下。
+
+```text
+64ab46d8d7c9335102e39547e0248c12b89cff29a4c259706a1c7907fd4fb8e2  demo/diagram.svg
+8bca2c38c1d7e9b92c3aad8481ce0f463072b9c95a1a772a4d0f3663d5c1a6d8  demo/interactive.html
+c85ccd0c1ccf493c9b8a826106712f6a4a0a8f7c3a00718752570ad829421629  docs/ANALYSIS_WORKFLOW_040.md
+08b9c9097d7bf145ef42755bc45c9fc64878a39b41a7e0e8c74011245c9ed0a5  LICENSE
+177f44d5b7a27c6190697b313a0efb7ae0b1c76c0139fa89d3a0e2419049faa6  ops/verify-agh-trace.mjs
+0bc6918c98125a2e4544bb58d1c126b681bd996d6dc059971d36a44c45e267fa  package.json
+9dd376f00ba358ebeb2e4db63aa6aa58c82cf586b2b04f0777bc093f00f29639  README.md
+7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6  src/.gitkeep
+8a8a0a87a1651c96d292b562fa8b8d9ae9fb2d4d3476ece94bf3b51a5d522e6f  src/agh/draft-store.mjs
+58632d0067ca41b239af722a10a40f44aac02af69fd569c9b4b780f26a1584cd  src/agh/errors.mjs
+c783dfcdd907b413cba5cf0a9fcf2c6a29ee25b1954b6adc2147c7dd746df028  src/agh/index.mjs
+4095cbf9578296a55ccc7bdc432d430204647db7efd85e508b46f23e0b95ad4b  src/agh/learning-tools.mjs
+58a08262f0aa484ae956320beb5e581d20834783a1d9c339a8cd91f0ce59fb7a  src/agh/research.mjs
+ea8f433bd62ee5d17610d950a0955009df15f60878cc34d8d0ed27a8d470dd2a  src/agh/session-state.mjs
+888c8cd689e1a5cb2ea2916d2c61b13e83d718ea532660811d85767b6af36bd8  src/agh/workspace-discovery.mjs
+9cc03cb6508da8a9699d8c9dc0c3058b57a98a4dd3d9495fb750c6b9b0a5644e  src/cli.mjs
+5160ddac09a3f0f714c4e4aeb73d2e4ced54eff96013773288b21c4c28867609  src/core/assessment.mjs
+9b3031d199ff876fcb11da57cfea4140ff1cbdeee9b7c86279baa70a2a9a4b61  src/core/learning.mjs
+b2d249a924d4a8016cc5bab62cbe4b27cafea0226544b905b4d08f9b2fd7d615  src/core/notices.mjs
+449fdc7fba4723103a2694b31983dd8aa245e1aeedfcef31a17a539837561292  src/core/page-link.mjs
+c5b547d28075026723983779a6611f8c2d483367b21e87e139226148cada4724  src/core/pipeline.mjs
+a7d62b37e8a6788ed07462329650652291d761573f286a5894554d11620c011d  src/core/renderer-adapter.mjs
+dac92275b14c237d45f4b55d38a9b8afed165cd950f270cef2d88050273bf2a4  src/core/visual-spec.mjs
+c9659ea9ded89498c1a0f5e485b6f80067de99fd85b18662dca638363d2f78ef  src/render/chart.mjs
+2f658c37da1dae3269887540f554a7289e29fb67927194c84cb38584af64ceee  src/render/contract.mjs
+24824a7624a96a0c3f905bd7c57ddcfc7ea274d4f9dc700fca47629b4fb21ca8  src/render/index.mjs
+7e8b08b16fbc2875b0d66aef367118b2e8d2a21c28a5821a8cdf88e97669001d  src/render/layout.mjs
+02c9a97f23a10034c38b0ab35782d07223be20215037468fab2e82523089c944  src/render/scene.mjs
+e2235565a0743e48cd45316674c94b94e21fd5b24f26e0e8ac99781f101035a6  src/render/svg.mjs
+c300c8922fb90ba961532834840ff951568eb9ea9fd18304adf88536c6f12ec5  src/render/teaching.mjs
+b9733e30dde317f41e32fe5fb0548bbce5a6af4218b79ad5ebc648988db863c3  src/render/text.mjs
+abf7da9a292e9724e1b1b32d62e212f6364aa682645b8455b83e48279607e67c  src/render/wave.mjs
+004cc3481b37b81c172788ecf2845767a3e2e86a7469a357a92f1fb0cbab1ff8  src/ui/chart-panel.mjs
+b3e817234c030092cc95d08c096c3d4a1b028d6c31d2140f698594e730d8bbd4  src/ui/learning-panel.mjs
+1c5b9bcae7726011276a695308d96fa7f9cd678fbb38d959737af667faffa2ea  src/ui/page.mjs
+```
