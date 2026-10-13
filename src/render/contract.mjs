@@ -1,4 +1,5 @@
 import { normalizeVisualSpec, visualRoles } from '../core/visual-spec.mjs'
+import { normalizeLearning } from '../core/learning.mjs'
 // Presentation validation only. Evidence decisions remain the caller's responsibility.
 export class RenderInputError extends Error {
   constructor(path, message) {
@@ -63,6 +64,8 @@ export function adaptRenderInput(first, second) {
       locator: text(s.locator, `${path}.locator`), excerpt: text(s.excerpt, `${path}.excerpt`, 10000),
       verified: legacy ? null : (s.verified ?? false),
       url: s.url === undefined ? null : text(s.url, `${path}.url`),
+      kind: s.kind === 'background' ? 'background' : 'original',
+      retrieved_at: s.retrieved_at === undefined ? null : text(s.retrieved_at, `${path}.retrieved_at`, 40), truncated: s.truncated === true,
     }
   })
   const refs = (v, path) => array(v, path, 0, 20).map((r) => {
@@ -91,6 +94,8 @@ export function adaptRenderInput(first, second) {
   if (content.content_kind !== undefined && !['synthetic_example', 'paper_excerpt'].includes(content.content_kind)) fail('content.content_kind', '未知内容类型')
   let illustration = null
   const visualization = normalizeVisualSpec(content.visualization, sourceIds, (path, message) => fail('content.' + path, message))
+  const learning = normalizeLearning(content.learning, sourceIds, (path, message) => fail('content.' + path, message))
+  if (learning && [learning.summary, ...learning.key_points].some(p => p.source_refs.some(id => sources.find(s => s.id === id).kind === 'background'))) fail('content.learning', '概述和要点不能使用背景来源代替原文')
   if (assessment.decision === 'supported' && visualization.chart?.series.some(s => !s.source_refs.length)) fail('content.visualization.chart', 'chart series require source references')
   if (content.illustration !== undefined) {
     const figure = object(content.illustration, 'content.illustration')
@@ -104,7 +109,7 @@ export function adaptRenderInput(first, second) {
   return {
     title: text(content.title, 'content.title', 200),
     goal: legacy ? null : text(content.goal, 'content.goal'),
-    kind: content.content_kind ?? 'unspecified', nodes, edges, sources, illustration, visualization,
+    kind: content.content_kind ?? 'unspecified', nodes, edges, sources, illustration, visualization, learning,
     limitations: [...texts(content.limitations ?? [], 'content.limitations'), ...texts(assessment.limitations, 'assessment.limitations')],
     decision: assessment.decision, missing,
   }

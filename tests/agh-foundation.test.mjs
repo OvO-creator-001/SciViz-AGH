@@ -102,7 +102,7 @@ test('AGH plugin registers foundation and business tools with metadata and schem
     ctx: { log: { info: () => {} } },
   }
   plugin.apply({ extension: () => agnes })
-  assert.deepEqual([...tools.keys()], ['assess_visualization_feasibility', 'generate_visualization', 'set_sciviz_root', 'inspect_sciviz_workspace'])
+  assert.deepEqual([...tools.keys()], ['assess_visualization_feasibility', 'generate_visualization', 'set_sciviz_root', 'inspect_sciviz_workspace', 'start_sciviz_analysis', 'research_sciviz_term', 'save_sciviz_analysis', 'get_sciviz_draft', 'render_sciviz_draft'])
   assert.equal(typeof hooks.get('shutdown'), 'function')
 
   const metadataKeys = ['isReadOnly', 'isDestructive', 'isConcurrencySafe', 'isOpenWorld', 'replay', 'costHint', 'deferLoading', 'requiresApproval']

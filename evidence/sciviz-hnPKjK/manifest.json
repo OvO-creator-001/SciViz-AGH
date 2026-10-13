@@ -1,0 +1,98 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-10-13T06:14:50.524Z",
+  "execution_origin": "cli",
+  "status": "rendered",
+  "assessment_decision": "supported",
+  "entrypoint": "interactive.html",
+  "source_review": {
+    "status": "pending",
+    "pending_source_refs": [
+      "original_1"
+    ],
+    "blocks_generation": false
+  },
+  "warnings": [
+    {
+      "code": "SOURCE_REVIEW_PENDING",
+      "source_refs": [
+        "original_1"
+      ],
+      "message": "来源核对为生成后的可选步骤。未核对资料可以生成示意图；生成不代表科学主张已被验证，关键结论请对照原文核查。"
+    }
+  ],
+  "copyright_notice": "版权与使用说明：本页根据输入资料自动生成。论文、图表、摘录及其他第三方材料的权利归原权利人所有；生成结果可能涉及复制、改编或传播等版权风险。生成不表示已获授权，本声明也不替代授权或自动免除责任。公开展示、发布或商业使用前，请核对原始许可、合理使用条件及署名要求；必要时取得授权。",
+  "renderer_error": null,
+  "artifacts": [
+    {
+      "name": "content.json",
+      "bytes": 8244,
+      "sha256": "3f4b7431a63c05ef90b4d37a7462cec9b3cfad58bb7b8b51ef7ef917f617d0e6"
+    },
+    {
+      "name": "assessment.json",
+      "bytes": 1452,
+      "sha256": "b602f0c4166b2cd4e292145cb00dc97c43f29d01a15629fb744a2e63b60e5c13"
+    },
+    {
+      "name": "diagram.svg",
+      "bytes": 12974,
+      "sha256": "eaa6f18b74d0fd5d65481adb13b7903f0cb66e8b7b5722e4c279e0af71f7c4be"
+    },
+    {
+      "name": "interactive.html",
+      "bytes": 81545,
+      "sha256": "f392ad9a3ad564aea6c1e3bfb7997f5ba12420eb6219e4c80c47d54db66d8c94"
+    },
+    {
+      "name": "teaching-1-academic.svg",
+      "bytes": 827,
+      "sha256": "c58677f21c26ef39d024fa3b3a03ac26b07a41e013a843a086db998ab7761998"
+    },
+    {
+      "name": "teaching-1-popular.svg",
+      "bytes": 818,
+      "sha256": "f9de8f86980bd50c06aef26cefdba6615c618dd4990cce7c31036bacc363269e"
+    },
+    {
+      "name": "teaching-2-academic.svg",
+      "bytes": 5006,
+      "sha256": "759975133b5cba8450eed220c6d5c2245eb70a03fb2cee3dd24060c72f7e61c5"
+    },
+    {
+      "name": "teaching-2-popular.svg",
+      "bytes": 5006,
+      "sha256": "bb1abfffa970a0a6a5b0ab20d9519add6ff43435d69755f0436e80d3ce5de093"
+    },
+    {
+      "name": "teaching-3-academic.svg",
+      "bytes": 5423,
+      "sha256": "6a78b6bf313f58ab5bd35dc2b9be9e1e88dcc2e5447a22f8d14b851b7ae74295"
+    },
+    {
+      "name": "teaching-3-popular.svg",
+      "bytes": 5433,
+      "sha256": "135b6f4748d5c9f2a76280172868b2b42ae30c8e3ceb9645db3809f8e9e52fd1"
+    },
+    {
+      "name": "teaching-4-academic.svg",
+      "bytes": 3487,
+      "sha256": "952c058fd88b7be45d4993b5cceb2a85b22f821d1e9eac6be4dbc6a729639a69"
+    },
+    {
+      "name": "teaching-4-popular.svg",
+      "bytes": 3501,
+      "sha256": "3ac799884363975c32ac4c892995ad215f5a5c998664451ec9a43beea7a92a0d"
+    },
+    {
+      "name": "teaching-5-academic.svg",
+      "bytes": 3732,
+      "sha256": "7538416e50854c41d1aa62305d0e588f834e1801111df5917a9b408f2dea1693"
+    },
+    {
+      "name": "teaching-5-popular.svg",
+      "bytes": 3693,
+      "sha256": "8bbd6abde5e04e5a7602d19dc91c5beb98762c2fcf9a73a0fe6299c69b7be09a"
+    }
+  ]
+}

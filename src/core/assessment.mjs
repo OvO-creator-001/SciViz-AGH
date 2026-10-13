@@ -1,5 +1,6 @@
 import { copyrightNotice, reviewNotice } from './notices.mjs'
 import { normalizeVisualSpec, visualRoles } from './visual-spec.mjs'
+import { normalizeLearning, learningRefs } from './learning.mjs'
 
 export class InputError extends Error {
   constructor(message) { super(message); this.code = 'INVALID_INPUT' }
@@ -21,8 +22,12 @@ export function normalizeInput(value) {
     requireThat(text(s.citation) && text(s.locator) && text(s.excerpt, 10000), 'source requires citation, locator and excerpt')
     requireThat(s.verified === undefined || typeof s.verified === 'boolean', 'source verified must be boolean when supplied')
     requireThat(s.url === undefined || text(s.url), 'source url must be text when supplied')
+    requireThat(s.kind === undefined || ['original', 'background'].includes(s.kind), 'invalid source kind')
+    requireThat(s.retrieved_at === undefined || (text(s.retrieved_at, 40) && Number.isFinite(Date.parse(s.retrieved_at))), 'invalid retrieval time')
+    requireThat(s.truncated === undefined || typeof s.truncated === 'boolean', 'invalid source truncated flag')
     sourceIds.add(s.id)
-    return { id: s.id, citation: s.citation, locator: s.locator, excerpt: s.excerpt, verified: s.verified ?? false, ...(s.url === undefined ? {} : { url: s.url }) }
+    return { id: s.id, citation: s.citation, locator: s.locator, excerpt: s.excerpt, verified: s.verified ?? false, ...(s.url === undefined ? {} : { url: s.url }),
+      ...(s.kind === undefined ? {} : { kind: s.kind }), ...(s.retrieved_at === undefined ? {} : { retrieved_at: s.retrieved_at }), ...(s.truncated === undefined ? {} : { truncated: s.truncated }) }
   })
   const refs = item => {
     requireThat(Array.isArray(item.source_refs) && item.source_refs.length <= 20 && item.source_refs.every(r => sourceIds.has(r)), 'invalid source_refs')
@@ -45,6 +50,8 @@ export function normalizeInput(value) {
     return { from: e.from, to: e.to, label: e.label, source_refs: refs(e) }
   })
   let illustration
+  const learning = normalizeLearning(value.learning, sourceIds, (path, message) => { throw new InputError(`${path}: ${message}`) })
+  if (learning) for (const point of [learning.summary, ...learning.key_points]) requireThat(point.source_refs.every(id => sources.find(s => s.id === id).kind !== 'background'), 'learning summary/key_points must cite original sources, not background')
   const visualization = normalizeVisualSpec(value.visualization, sourceIds, (path, message) => { throw new InputError(`${path}: ${message}`) })
   if (value.illustration !== undefined) {
     const figure = value.illustration
@@ -63,6 +70,7 @@ export function normalizeInput(value) {
     ...(value.content_kind === undefined ? {} : { content_kind: value.content_kind }),
     ...(value.limitations === undefined ? {} : { limitations: [...value.limitations] }),
     ...(illustration === undefined ? {} : { illustration }),
+    ...(learning === null ? {} : { learning }),
     visualization,
     sources, nodes, edges, constraints: { allow_paid: false, external_budget: 0, offline_required: true } }
 }
@@ -76,7 +84,7 @@ export function assessVisualization(value) {
   if (input.illustration && !input.illustration.source_refs.length) missing.push('illustration:source_reference_required')
   for (const [i, s] of (input.visualization.chart?.series ?? []).entries()) if (!s.source_refs.length) missing.push(`chart:series:${i}:source_reference_required`)
   const supported = missing.length === 0
-  const evidenceRefs = [...new Set([...input.nodes, ...input.edges, ...(input.illustration ? [input.illustration] : []), ...(input.visualization.chart?.series ?? [])].flatMap(x => x.source_refs))]
+  const evidenceRefs = [...new Set([...input.nodes, ...input.edges, ...(input.illustration ? [input.illustration] : []), ...(input.visualization.chart?.series ?? [])].flatMap(x => x.source_refs).concat(learningRefs(input.learning)))]
   const pending = input.sources.filter(s => !s.verified && evidenceRefs.includes(s.id)).map(s => s.id)
   return {
     schema_version: '1.0', decision: supported ? 'supported' : 'insufficient_evidence',

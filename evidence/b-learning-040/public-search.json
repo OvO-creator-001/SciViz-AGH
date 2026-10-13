@@ -1,0 +1,35 @@
+{
+  "checked_at": "2026-10-13T06:10:52.634Z",
+  "sources": [
+    {
+      "citation": "搜索摘要：简谐运动 _百度百科",
+      "url": "https://baike.baidu.com/item/%E7%AE%80%E8%B0%90%E8%BF%90%E5%8A%A8/1101010",
+      "locator": "Bing 搜索摘要，尚未读取目标正文；检索页 https://cn.bing.com/search?q=%E7%AE%80%E8%B0%90%E8%BF%90%E5%8A%A8",
+      "excerpt": "简谐运动是最基本也最简单的机械振动。 当某物体进行简谐运动时，物体所受的力跟位移成正比，并且总是指向平衡位置。 它是一种 …",
+      "kind": "background",
+      "verified": false,
+      "retrieved_at": "2026-10-13T06:10:52.388Z",
+      "truncated": true
+    },
+    {
+      "citation": "搜索摘要：高中物理： 简谐运动 （振幅、周期、频率、相位），阻尼振动 ...",
+      "url": "https://zhuanlan.zhihu.com/p/401602914",
+      "locator": "Bing 搜索摘要，尚未读取目标正文；检索页 https://cn.bing.com/search?q=%E7%AE%80%E8%B0%90%E8%BF%90%E5%8A%A8",
+      "excerpt": "2021年8月19日&ensp;&#0183;&ensp;了解简谐振动的定义，同时也能够看明白振动图像的信息，能够通过振动图像读出相关物理量。 知道 简谐振动 当中 …",
+      "kind": "background",
+      "verified": false,
+      "retrieved_at": "2026-10-13T06:10:52.388Z",
+      "truncated": true
+    },
+    {
+      "citation": "搜索摘要：高中物理 《 简谐运动 》基础知识总结 - 知乎",
+      "url": "https://zhuanlan.zhihu.com/p/624186590",
+      "locator": "Bing 搜索摘要，尚未读取目标正文；检索页 https://cn.bing.com/search?q=%E7%AE%80%E8%B0%90%E8%BF%90%E5%8A%A8",
+      "excerpt": "2023年4月23日&ensp;&#0183;&ensp;1、运动学概念：如果质点的位移与时间的关系遵从正弦函数的规律，即它的振动图象 (x-t)是一条正弦曲线，这样的 …",
+      "kind": "background",
+      "verified": false,
+      "retrieved_at": "2026-10-13T06:10:52.388Z",
+      "truncated": true
+    }
+  ]
+}
