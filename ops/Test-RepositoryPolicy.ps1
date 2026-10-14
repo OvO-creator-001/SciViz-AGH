@@ -9,10 +9,12 @@ Set-Location -LiteralPath $repoRoot
 $gitCommand = Get-Command git -ErrorAction Stop
 $allowedRootFiles = @(
     ".gitignore",
+    ".gitattributes",
     "CHANGELOG.md",
     "LICENSE",
     "package.json",
-    "README.md"
+    "README.md",
+    "UPDATES.md"
 )
 $allowedRootDirectories = @(
     ".github",

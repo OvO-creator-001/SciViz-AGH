@@ -1,21 +1,22 @@
 {
   "name": "sciviz-agh",
-  "version": "0.1.1",
+  "version": "0.3.1",
   "private": true,
   "type": "module",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "description": "SciViz-AGH plugin foundation and evidence verification tools",
   "engines": {
     "node": ">=24"
   },
   "exports": "./src/agh/index.mjs",
   "files": [
-    "src/agh",
+    "src",
     "ops/verify-agh-trace.mjs"
   ],
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "verify:trace": "node ops/verify-agh-trace.mjs"
+    "verify:trace": "node ops/verify-agh-trace.mjs",
+    "sciviz": "node src/cli.mjs"
   },
   "agnes": {
     "plugins": [

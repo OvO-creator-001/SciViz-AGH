@@ -1,0 +1,6 @@
+{
+  "decision": "supported",
+  "recommended_format": "interactive_2d",
+  "limitations": ["本结果只用于界面开发。"],
+  "missing_requirements": []
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "decision": "supported",
+  "recommended_format": "interactive_2d",
+  "missing_requirements": [],
+  "evidence_refs": [
+    "s1"
+  ],
+  "limitations": [
+    "Rule-based structural checks only; source verification is a human attestation, not automatic scientific validation.",
+    "No calibrated probability, PDF parsing, paid API, 3D or scientific simulation."
+  ],
+  "fallbacks": [
+    "static_svg",
+    "evidence_report"
+  ],
+  "external_cost": 0
+}

@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-10-12T15:23:55.672Z",
+  "execution_origin": "agh",
+  "status": "rendered",
+  "assessment_decision": "supported",
+  "entrypoint": "interactive.html",
+  "source_review": {
+    "status": "pending",
+    "pending_source_refs": [
+      "s1"
+    ],
+    "blocks_generation": false
+  },
+  "warnings": [
+    {
+      "code": "SOURCE_REVIEW_PENDING",
+      "source_refs": [
+        "s1"
+      ],
+      "message": "来源核对为生成后的可选步骤。未核对资料可以生成示意图；生成不代表科学主张已被验证，关键结论请对照原文核查。"
+    }
+  ],
+  "copyright_notice": "版权与使用说明：本页根据输入资料自动生成。论文、图表、摘录及其他第三方材料的权利归原权利人所有；生成结果可能涉及复制、改编或传播等版权风险。生成不表示已获授权，本声明也不替代授权或自动免除责任。公开展示、发布或商业使用前，请核对原始许可、合理使用条件及署名要求；必要时取得授权。",
+  "renderer_error": null,
+  "artifacts": [
+    {
+      "name": "content.json",
+      "bytes": 2841,
+      "sha256": "528c71daab43f53809c52d54640aaa0f75162999f32c0d1c39d601a1adb2de58"
+    },
+    {
+      "name": "assessment.json",
+      "bytes": 1428,
+      "sha256": "b6957390528a74624ef03b198b8d92df5189e2597aee93739e643915653a9a53"
+    },
+    {
+      "name": "diagram.svg",
+      "bytes": 20494,
+      "sha256": "f0bd9f1c8a23549888f284d172a00d6149423cd661cf9edd717356a23efb200f"
+    },
+    {
+      "name": "interactive.html",
+      "bytes": 38605,
+      "sha256": "d95967c0e622b5bf0f601bda1abc6fa479c83dfdfe534630d88af5c90cfa7b2d"
+    }
+  ]
+}

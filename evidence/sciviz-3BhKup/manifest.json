@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-10-12T09:11:05.834Z",
+  "execution_origin": "cli",
+  "status": "renderer_pending",
+  "assessment_decision": "supported",
+  "renderer_error": null,
+  "artifacts": [
+    {
+      "name": "content.json",
+      "bytes": 1242,
+      "sha256": "91b8ef62c579d0371c024b34adef8601c15f6a4fd7f602d6ceeb55ab982789cc"
+    },
+    {
+      "name": "assessment.json",
+      "bytes": 480,
+      "sha256": "0481f3a6530f4d63e3565ef0a338dcf0da2e18990ef59f05eaa3301c4710d1a2"
+    }
+  ]
+}

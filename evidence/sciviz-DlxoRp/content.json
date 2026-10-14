@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0",
+  "title": "两列波相遇，为什么会增强或抵消？",
+  "goal": "从单列波到叠加结果，沿着关系理解相位差如何改变合成位移。拖动相位滑块，比较同相与反相。",
+  "audience": "undergraduate",
+  "content_kind": "synthetic_example",
+  "limitations": [
+    "团队自编的理想化教学夹具，不是真实论文或实验数据。仅讨论同频、等振幅线性波的位移叠加；不模拟光强、探测器或量子测量。"
+  ],
+  "illustration": {
+    "kind": "wave_interference",
+    "phase_degrees": 60,
+    "source_refs": [
+      "s1"
+    ]
+  },
+  "sources": [
+    {
+      "id": "s1",
+      "citation": "SciViz 团队原创教学说明：线性波的叠加",
+      "locator": "示例模型与假设",
+      "excerpt": "设 y₁=sin(x)，y₂=sin(x+φ)，同一坐标处的合成位移 y=y₁+y₂。同相时振幅为2；相差π时两列波的位移相互抵消。一般合成振幅为2|cos(φ/2)|。这是无量纲理想模型，不是实测数据。",
+      "verified": false
+    }
+  ],
+  "nodes": [
+    {
+      "id": "setup",
+      "label": "设定共同条件",
+      "explanation": "两列波同频、等振幅，满足线性叠加。横轴为无量纲相位坐标 x；纵轴为无量纲位移。",
+      "source_refs": [
+        "s1"
+      ]
+    },
+    {
+      "id": "a",
+      "label": "波 A：固定相位基准",
+      "explanation": "y₁=sin(x)。保持这一列波不变，作为比较基准。",
+      "source_refs": [
+        "s1"
+      ]
+    },
+    {
+      "id": "b",
+      "label": "波 B：改变相对相位",
+      "explanation": "y₂=sin(x+φ)。改变 φ 会移动波峰和波谷相对波 A 的位置。",
+      "source_refs": [
+        "s1"
+      ]
+    },
+    {
+      "id": "sum",
+      "label": "在同一坐标相加",
+      "explanation": "对每一个 x，将两列波的位移相加：y=y₁+y₂。叠加的是位移，不是将强度数值直接相加。",
+      "source_refs": [
+        "s1"
+      ]
+    },
+    {
+      "id": "result",
+      "label": "观察增强与抵消",
+      "explanation": "φ=0° 时同相增强；φ=180° 时完全抵消。其他相位差下的合成振幅为 2|cos(φ/2)|。",
+      "source_refs": [
+        "s1"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "setup",
+      "to": "a",
+      "label": "保持基准波不变",
+      "source_refs": [
+        "s1"
+      ]
+    },
+    {
+      "from": "setup",
+      "to": "b",
+      "label": "只调节相位差 φ",
+      "source_refs": [
+        "s1"
+      ]
+    },
+    {
+      "from": "a",
+      "to": "sum",
+      "label": "提供位移 y₁",
+      "source_refs": [
+        "s1"
+      ]
+    },
+    {
+      "from": "b",
+      "to": "sum",
+      "label": "提供位移 y₂",
+      "source_refs": [
+        "s1"
+      ]
+    },
+    {
+      "from": "sum",
+      "to": "result",
+      "label": "振幅由相位差决定",
+      "source_refs": [
+        "s1"
+      ]
+    }
+  ],
+  "constraints": {
+    "allow_paid": false,
+    "external_budget": 0,
+    "offline_required": true
+  }
+}

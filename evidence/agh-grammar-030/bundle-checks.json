@@ -1,0 +1,52 @@
+{
+  "verified": true,
+  "directory": "evidence/sciviz-jtYJBx",
+  "status": "rendered",
+  "source_review": {
+    "status": "pending",
+    "pending_source_refs": [
+      "s1"
+    ],
+    "blocks_generation": false
+  },
+  "all_artifact_hashes_verified": true,
+  "exact_fixture_native_input": true,
+  "chart_values_preserved": true,
+  "events": [
+    {
+      "seq": 573,
+      "type": "turn/start"
+    },
+    {
+      "seq": 583,
+      "type": "tool/call",
+      "name": "set_sciviz_root"
+    },
+    {
+      "seq": 584,
+      "type": "tool/call",
+      "name": "assess_visualization_feasibility"
+    },
+    {
+      "seq": 588,
+      "type": "tool/result"
+    },
+    {
+      "seq": 592,
+      "type": "tool/result"
+    },
+    {
+      "seq": 605,
+      "type": "tool/call",
+      "name": "generate_visualization"
+    },
+    {
+      "seq": 609,
+      "type": "tool/result"
+    },
+    {
+      "seq": 627,
+      "type": "turn/end"
+    }
+  ]
+}

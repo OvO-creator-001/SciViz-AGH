@@ -1,0 +1,7 @@
+import { renderChart, chartColors } from '../render/chart.mjs'
+import { escapeText as esc } from '../render/text.mjs'
+
+export function chartPanel(chart, refs) {
+  const names = { bar: '组间比较', line: '数值趋势', scatter: '变量分布' }
+  return `<section class="card science-plate evidence-plot"><div class="plate-heading"><div><div class="mini-label">EVIDENCE / ${chart.kind.toUpperCase()}</div><h2>${esc(chart.title)}</h2></div><span class="muted">${names[chart.kind]} · 仅使用输入数据</span></div><div class="chart-legend">${chart.series.map((s, i) => `<span><button data-toggle-series="${i}" aria-pressed="true" style="--series:${chartColors[i]}">${esc(s.label)}</button><small> ${refs(s.source_refs)}</small></span>`).join('')}</div><div class="plot-scroll" tabindex="0" role="region" aria-label="数据图，窄屏可横向滚动">${renderChart(chart)}</div><p id="chart-reading" class="muted" aria-live="polite">指向或用 Tab 聚焦数据点查看精确值；点击图例可切换系列。坐标比例始终保持一致。</p><details class="data-table"><summary>查看完整数值与出处（${chart.series.reduce((n,s)=>n+s.points.length,0)} 个输入点）</summary><div class="table-scroll"><table><thead><tr><th>系列</th><th>${esc(chart.x_label)}</th><th>${esc(chart.y_label)}</th><th>出处</th></tr></thead><tbody>${chart.series.flatMap(s => s.points.map(p => `<tr><td>${esc(s.label)}</td><td>${esc(String(p.x))}</td><td>${esc(String(p.y))}</td><td>${refs(s.source_refs)}</td></tr>`)).join('')}</tbody></table></div></details><p class="hint">数值和系列出处由输入提供；未从论文标题推测实验数据，未拟合曲线、误差范围或显著性。</p></section>`
+}

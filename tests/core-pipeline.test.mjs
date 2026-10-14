@@ -1,0 +1,48 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import { mkdtemp, readFile, rm } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { assessVisualization, normalizeInput } from '../src/core/assessment.mjs'
+import { generateVisualization } from '../src/core/pipeline.mjs'
+const fixture = JSON.parse(await readFile(new URL('../examples/core-content-v1.json', import.meta.url), 'utf8'))
+test('normal, missing evidence, invalid references and paid mode', () => {
+ assert.equal(assessVisualization(fixture).decision, 'supported')
+ const unreviewed=structuredClone(fixture); unreviewed.sources[0].verified=false
+ assert.equal(assessVisualization(unreviewed).decision, 'supported')
+ delete unreviewed.sources[0].verified
+ const result=assessVisualization(unreviewed)
+ assert.equal(result.decision,'supported')
+ assert.deepEqual(result.source_review.pending_source_refs,['s1'])
+ assert.equal(result.source_review.blocks_generation,false)
+ assert.equal(normalizeInput(unreviewed).sources[0].verified,false)
+ assert.match(result.copyright_notice,/不替代授权/)
+ const missing=structuredClone(fixture); missing.nodes[0].source_refs=[]
+ assert.equal(assessVisualization(missing).decision,'insufficient_evidence')
+ assert.throws(()=>assessVisualization({...fixture,sources:[{...fixture.sources[0],verified:'yes'}]}),/boolean/)
+ const bad=structuredClone(fixture); bad.nodes[0].source_refs=['missing']
+ assert.throws(()=>assessVisualization(bad), /source_refs/)
+ assert.throws(()=>assessVisualization({...fixture,constraints:{allow_paid:true}}), /free offline/)
+})
+test('bundles never overwrite; missing evidence skips renderer; renderer failure is explicit', async()=>{
+ const root=await mkdtemp(join(tmpdir(),'sciviz-core-'))
+ try {
+  const a=await generateVisualization(fixture,{root})
+  const before=await readFile(a.output_path,'utf8')
+  const b=await generateVisualization(fixture,{root})
+  assert.notEqual(a.directory,b.directory); assert.equal(a.status,'renderer_pending')
+  assert.equal(await readFile(a.output_path,'utf8'),before)
+  const missing=structuredClone(fixture); missing.nodes[0].source_refs=[]
+  const report=await generateVisualization(missing,{root,renderer:()=>{throw new Error('must not run')}})
+  assert.equal(report.status,'evidence_report'); assert.equal(report.renderer_error,null)
+  const failed=await generateVisualization(fixture,{root,renderer:()=>{throw new Error('offline render failure')}})
+  assert.equal(failed.status,'renderer_failed')
+  const rendered=await generateVisualization(fixture,{root,renderer:()=>({svg:'<svg></svg>',html:'<!doctype html><html></html>'})})
+  assert.equal(rendered.status,'rendered'); assert.equal(rendered.artifacts.length,4)
+  assert.equal(rendered.interactive_html_path,join(rendered.directory,'interactive.html'))
+  assert.match(rendered.interactive_html_uri,/^file:\/\//)
+  assert.equal(rendered.open_page_markdown,`[打开互动页面](${rendered.interactive_html_uri})`)
+  assert.equal(JSON.parse(await readFile(rendered.output_path,'utf8')).entrypoint,'interactive.html')
+  assert.equal(a.interactive_html_path,undefined)
+ } finally {await rm(root,{recursive:true,force:true})}
+})

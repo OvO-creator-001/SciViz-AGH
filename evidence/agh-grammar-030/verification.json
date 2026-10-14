@@ -1,0 +1,39 @@
+{
+  "verified": true,
+  "policy": "sciviz-agh-core-registration-v1",
+  "startSeq": 573,
+  "endSeq": 627,
+  "completed": true,
+  "calls": [
+    {
+      "seq": 583,
+      "resultSeq": 588,
+      "name": "set_sciviz_root",
+      "isError": false,
+      "errorCode": null
+    },
+    {
+      "seq": 584,
+      "resultSeq": 592,
+      "name": "assess_visualization_feasibility",
+      "isError": false,
+      "errorCode": null
+    },
+    {
+      "seq": 605,
+      "resultSeq": 609,
+      "name": "generate_visualization",
+      "isError": false,
+      "errorCode": null
+    }
+  ],
+  "artifacts": [
+    {
+      "tool": "generate_visualization",
+      "path": "/mnt/c/Users/lenovo/Documents/Codex/2026-10-12/sciviz-agh-3d-sciviz-agh-3d/evidence/sciviz-jtYJBx/manifest.json",
+      "bytes": 1676,
+      "sha256": "c6d81037e8af75712d44adc5a32a4d9298bec8fa2e270fe629361b6b5690ed52",
+      "format": "json"
+    }
+  ]
+}

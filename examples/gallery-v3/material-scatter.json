@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.0",
+  "title": "变量之间：先看分布，再讨论关联",
+  "goal": "示例展示材料测试中两个变量的分布表达；没有拟合线，不推断因果，也不编造测量误差。",
+  "audience": "undergraduate",
+  "content_kind": "synthetic_example",
+  "sources": [
+    {
+      "id": "s1",
+      "citation": "SciViz 团队原创跨学科教学夹具（v0.3）",
+      "locator": "本示例的概念、关系与数值表",
+      "excerpt": "本例仅演示图解表达和交互，所有名称与数值均为人为构造，不是论文实验结果，不可作为科学证据。"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "sample",
+      "label": "输入样本",
+      "explanation": "数值来自本教学夹具，不能视为真实实验。",
+      "visual_role": "data",
+      "source_refs": [
+        "s1"
+      ]
+    },
+    {
+      "id": "method",
+      "label": "处理方案",
+      "explanation": "按图例区分系列，比较时使用共同坐标范围。",
+      "visual_role": "process",
+      "source_refs": [
+        "s1"
+      ]
+    },
+    {
+      "id": "metric",
+      "label": "观察指标",
+      "explanation": "图中保留原始数值；不补造误差棒、显著性或未给出的数据。",
+      "visual_role": "measure",
+      "source_refs": [
+        "s1"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "sample",
+      "to": "method",
+      "label": "输入相同示例条件",
+      "source_refs": [
+        "s1"
+      ]
+    },
+    {
+      "from": "method",
+      "to": "metric",
+      "label": "记录图示指标",
+      "source_refs": [
+        "s1"
+      ]
+    }
+  ],
+  "limitations": [
+    "原创教学夹具，不是真实论文结论；图形符号不代表实际几何。"
+  ],
+  "visualization": {
+    "layout": "auto",
+    "chart": {
+      "kind": "scatter",
+      "title": "样品输入点的二维分布",
+      "x_label": "示例密度（g/cm³）",
+      "y_label": "示例强度（MPa）",
+      "series": [
+        {
+          "label": "样品组 A",
+          "source_refs": [
+            "s1"
+          ],
+          "points": [
+            {
+              "x": 1.1,
+              "y": 24
+            },
+            {
+              "x": 1.4,
+              "y": 38
+            },
+            {
+              "x": 1.8,
+              "y": 35
+            },
+            {
+              "x": 2,
+              "y": 57
+            },
+            {
+              "x": 2.3,
+              "y": 51
+            }
+          ]
+        },
+        {
+          "label": "样品组 B",
+          "source_refs": [
+            "s1"
+          ],
+          "points": [
+            {
+              "x": 1.2,
+              "y": 32
+            },
+            {
+              "x": 1.5,
+              "y": 29
+            },
+            {
+              "x": 1.9,
+              "y": 46
+            },
+            {
+              "x": 2.2,
+              "y": 49
+            },
+            {
+              "x": 2.4,
+              "y": 64
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

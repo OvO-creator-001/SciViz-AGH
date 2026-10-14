@@ -1,0 +1,116 @@
+{
+  "schema_version": "1.0",
+  "title": "方法比较：提升来自哪些条件？",
+  "goal": "比较两种教学模型在相同条件下的示例分数。数值人为构造，不能用来宣称模型优劣。",
+  "audience": "undergraduate",
+  "content_kind": "synthetic_example",
+  "sources": [
+    {
+      "id": "s1",
+      "citation": "SciViz 团队原创跨学科教学夹具（v0.3）",
+      "locator": "本示例的概念、关系与数值表",
+      "excerpt": "本例仅演示图解表达和交互，所有名称与数值均为人为构造，不是论文实验结果，不可作为科学证据。"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "sample",
+      "label": "输入样本",
+      "explanation": "数值来自本教学夹具，不能视为真实实验。",
+      "visual_role": "data",
+      "source_refs": [
+        "s1"
+      ]
+    },
+    {
+      "id": "method",
+      "label": "处理方案",
+      "explanation": "按图例区分系列，比较时使用共同坐标范围。",
+      "visual_role": "process",
+      "source_refs": [
+        "s1"
+      ]
+    },
+    {
+      "id": "metric",
+      "label": "观察指标",
+      "explanation": "图中保留原始数值；不补造误差棒、显著性或未给出的数据。",
+      "visual_role": "measure",
+      "source_refs": [
+        "s1"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "sample",
+      "to": "method",
+      "label": "输入相同示例条件",
+      "source_refs": [
+        "s1"
+      ]
+    },
+    {
+      "from": "method",
+      "to": "metric",
+      "label": "记录图示指标",
+      "source_refs": [
+        "s1"
+      ]
+    }
+  ],
+  "limitations": [
+    "原创教学夹具，不是真实论文结论；图形符号不代表实际几何。"
+  ],
+  "visualization": {
+    "layout": "auto",
+    "chart": {
+      "kind": "bar",
+      "title": "同一尺度比较，不隐藏零基线",
+      "x_label": "示例测试条件",
+      "y_label": "示例分数（0–100，无量纲）",
+      "series": [
+        {
+          "label": "基础方案",
+          "source_refs": [
+            "s1"
+          ],
+          "points": [
+            {
+              "x": "清晰输入",
+              "y": 82
+            },
+            {
+              "x": "含噪输入",
+              "y": 58
+            },
+            {
+              "x": "缺失输入",
+              "y": 41
+            }
+          ]
+        },
+        {
+          "label": "改进方案",
+          "source_refs": [
+            "s1"
+          ],
+          "points": [
+            {
+              "x": "清晰输入",
+              "y": 88
+            },
+            {
+              "x": "含噪输入",
+              "y": 76
+            },
+            {
+              "x": "缺失输入",
+              "y": 64
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

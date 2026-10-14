@@ -1,0 +1,22 @@
+# Preserve bytes of this native evidence set, including manifest SHA-256 inputs.
+evidence/sciviz-IbR8bd/*.json -text
+evidence/agh-registration-012/*.json -text
+evidence/agh-registration-012/*.jsonl -text
+# Preserve the new CLI and native AGH rendered evidence byte-for-byte.
+evidence/sciviz-8LyTpJ/* -text
+evidence/sciviz-JnpumL/* -text
+evidence/agh-rendered-013/*.json -text
+evidence/agh-rendered-013/*.jsonl -text
+# Preserve v0.2.1 native evidence and generated artifact hashes.
+evidence/agh-atlas-021/*.json -text
+evidence/agh-atlas-021/*.jsonl -text
+evidence/sciviz-DlxoRp/* -text
+# Preserve v0.3.0 evidence and artifact hashes.
+evidence/visual-grammar-030/*.json -text
+evidence/agh-grammar-030/*.json -text
+evidence/agh-grammar-030/*.jsonl -text
+evidence/sciviz-jtYJBx/* -text
+# Preserve v0.3.1 native link evidence and generated artifact hashes.
+evidence/agh-page-link-031/*.json -text
+evidence/agh-page-link-031/*.jsonl -text
+evidence/sciviz-MxKo3r/* -text

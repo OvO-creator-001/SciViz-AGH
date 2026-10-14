@@ -1,0 +1,19 @@
+{
+  "schema_version": "0.1",
+  "title": "教学合成示例：数据处理流程",
+  "audience": "undergraduate",
+  "content_kind": "synthetic_example",
+  "nodes": [
+    {"id":"n1","label":"输入数据","explanation":"准备待处理的数据。","source_refs":["s1"]},
+    {"id":"n2","label":"处理数据","explanation":"按照指定步骤处理。","source_refs":["s1"]},
+    {"id":"n3","label":"查看结果","explanation":"观察输出并检查限制。","source_refs":["s1"]}
+  ],
+  "edges": [
+    {"from":"n1","to":"n2","label":"下一步","source_refs":["s1"]},
+    {"from":"n2","to":"n3","label":"下一步","source_refs":["s1"]}
+  ],
+  "sources": [
+    {"id":"s1","label":"团队编写的教学样例","locator":"示例说明第1段","excerpt":"准备数据，处理数据，再查看结果。"}
+  ],
+  "limitations": ["用于验证页面，不代表真实论文结论。"]
+}

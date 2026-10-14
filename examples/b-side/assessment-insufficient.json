@@ -1,0 +1,6 @@
+{
+  "decision": "insufficient_evidence",
+  "recommended_format": "evidence_report",
+  "limitations": ["教学合成示例；此评估为页面开发夹具，不是规则引擎的实测结论。"],
+  "missing_requirements": ["尚未提供经人工核对的真实论文摘录。", "流程关系需要逐项对应来源。"]
+}
