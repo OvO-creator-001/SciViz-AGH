@@ -6,6 +6,7 @@
 
 | 日期 | 更新 | 状态 | 快速入口 |
 |---|---|---|---|
+| 2026-10-14 | GitHub 仓库截图与赛事展示材料 | 原图归档；仓库目前仍私有，不编造公开日期；桌面文件夹同步且未压缩 | [截图与说明](docs/product/public-content/20261014/README.md) · [技术日志](changes/20261014-2330-github-showcase-evidence.md) |
 | 2026-10-14 | 0.4.2图形安装助手1.0.0 | Windows、WSL原生与挂载盘解压验证通过；桌面提交包同步更新 | [下载EXE](ops/installer/releases/1.0.0/SciViz-AGH-0.4.2-Setup.exe) · [安装说明](docs/product/INSTALLER_042.md) · [技术日志](changes/20261014-1705-portable-plugin-installer.md) |
 | 2026-10-13 | U382赛事材料与评委复现入口 | 固定B侧0.4.2；36项测试及四组样例通过；私人日志仅本机打包，不上传仓库 | [提交说明](docs/submission/U382/README.md) · [技术日志](changes/20261013-2240-u382-submission-materials.md) |
 | 2026-10-12 | v0.3.1：生成后直接打开页面 | 27项测试通过；真实AGH rendered，模型最终回复逐字展示Markdown链接和备用路径；上传A分支/PR #3，未合并 | [使用说明](docs/product/QUICKSTART_030.md) · [真实验证](evidence/agh-page-link-031/RESULTS.md) · [技术日志](changes/20261012-2315-clickable-page-entry.md) |
