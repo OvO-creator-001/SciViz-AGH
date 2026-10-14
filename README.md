@@ -6,6 +6,8 @@
 
 **协作者快速入口：[最新更新、PR状态与下一步](UPDATES.md)。**
 
+**0.4.2 安装助手：[Windows / WSL 图形 EXE 使用说明](docs/product/INSTALLER_042.md) · [下载安装助手](ops/installer/releases/1.0.0/SciViz-AGH-0.4.2-Setup.exe)。双击查找后台工作目录并解压，随后到 AGH 插件管理完成启用。**
+
 **新版试用：[v0.3.0/0.3.1 六类图解与页面入口](docs/product/QUICKSTART_030.md) · [流程截图](evidence/visual-grammar-030/method.png) · [真实页面入口证据](evidence/agh-page-link-031/RESULTS.md)。**
 
 1. **历史版本只新增、不覆盖**：每次正式交接创建新的 `releases/vX.Y.Z/` 快照；已提交的版本目录禁止修改、重命名或删除。
